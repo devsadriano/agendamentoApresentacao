@@ -1,5 +1,34 @@
 <template>
   <div class="min-h-screen bg-gradient-to-br from-blue-400 via-purple-500 to-pink-500">
+    <!-- Auth Section -->
+    <div class="absolute top-4 right-4">
+      <ClientOnly>
+        <div class="bg-white/20 backdrop-blur-sm rounded-lg p-4 text-white">
+          <div v-if="currentUser" class="flex items-center space-x-3">
+            <div>
+              <p class="text-sm font-medium">{{ currentUser.email }}</p>
+              <p class="text-xs opacity-75">Usuário logado</p>
+            </div>
+            <button
+              @click="handleLogout"
+              :disabled="isLoading"
+              class="bg-red-500 hover:bg-red-600 disabled:opacity-50 px-3 py-1 rounded text-sm font-medium transition-colors"
+            >
+              {{ isLoading ? 'Saindo...' : 'Sair' }}
+            </button>
+          </div>
+          <div v-else>
+            <p class="text-sm">Não autenticado</p>
+          </div>
+        </div>
+        <template #fallback>
+          <div class="bg-white/20 backdrop-blur-sm rounded-lg p-4 text-white">
+            <p class="text-sm">Carregando...</p>
+          </div>
+        </template>
+      </ClientOnly>
+    </div>
+
     <div class="container mx-auto px-4 py-16">
       <!-- Header -->
       <header class="text-center mb-12">
@@ -101,6 +130,9 @@
 </template>
 
 <script setup lang="ts">
+// Composable de autenticação (import explícito conforme Nuxt 4 guidelines)
+const { logout, isLoading, currentUser } = useAuth()
+
 // Configurações da página
 definePageMeta({
   title: 'Teste Tailwind CSS'
@@ -113,4 +145,9 @@ useHead({
     { name: 'description', content: 'Página de teste para demonstrar funcionalidades do Tailwind CSS no Nuxt 4' }
   ]
 })
+
+// Função para fazer logout
+const handleLogout = async () => {
+  await logout()
+}
 </script>

@@ -11,9 +11,10 @@
     </div>
 
     <!-- Formulário -->
-    <form class="space-y-6" @submit.prevent>
+    <form class="space-y-6" @submit.prevent="handleSubmit">
       <!-- Campo E-mail -->
       <BaseInput
+        id="login-email"
         label="E-mail"
         type="email"
         placeholder="seu@email.com"
@@ -27,6 +28,7 @@
 
       <!-- Campo Senha -->
       <BaseInput
+        id="login-password"
         label="Senha"
         type="password"
         placeholder="••••••••"
@@ -42,12 +44,12 @@
       <div class="flex items-center justify-between">
         <div class="flex items-center">
           <input
-            id="remember-me"
-            name="remember-me"
+            id="login-remember-me"
+            name="login-remember-me"
             type="checkbox"
             class="h-4 w-4 text-primary-600 focus:ring-primary-500 border-border-default rounded"
           />
-          <label for="remember-me" class="ml-2 block text-sm text-text-secondary">
+          <label for="login-remember-me" class="ml-2 block text-sm text-text-secondary">
             Lembrar de mim
           </label>
         </div>
@@ -65,7 +67,8 @@
         variant="primary"
         size="lg"
         full-width
-        text="Entrar"
+        :text="isLoading ? 'Entrando...' : 'Entrar'"
+        :disabled="isLoading || !isFormValid"
       >
         <template #icon-left>
           <ArrowRightOnRectangleIcon class="w-5 h-5" />
@@ -97,6 +100,7 @@
 
 <script setup lang="ts">
 import { EnvelopeIcon, LockClosedIcon, ArrowRightOnRectangleIcon } from '@heroicons/vue/24/outline'
+import type { LoginCredentials } from '../../shared/types'
 
 // Props do componente
 interface Props {
@@ -107,20 +111,45 @@ const props = withDefaults(defineProps<Props>(), {
   loading: false
 })
 
+// Composable de autenticação (import explícito conforme Nuxt 4 guidelines)
+const { login, isLoading } = useAuth()
+
 // Dados do formulário
 const email = ref('')
 const password = ref('')
 
+// Validação do formulário
+const isFormValid = computed(() => {
+  return email.value.trim() !== '' && 
+         password.value.trim() !== '' && 
+         email.value.includes('@')
+})
+
 // Emits para comunicação com o componente pai
 const emit = defineEmits<{
-  submit: [{ email: string; password: string }]
+  submit: [LoginCredentials]
 }>()
 
-// Função para enviar formulário (será implementada depois)
-const handleSubmit = () => {
-  emit('submit', {
-    email: email.value,
+// Função para enviar formulário
+const handleSubmit = async () => {
+  if (!isFormValid.value) {
+    return
+  }
+
+  const credentials: LoginCredentials = {
+    email: email.value.trim(),
     password: password.value
-  })
+  }
+
+  const result = await login(credentials)
+
+  // Emite o evento para o componente pai se necessário
+  emit('submit', credentials)
+
+  // Limpa os campos apenas se houve sucesso
+  if (result.success) {
+    email.value = ''
+    password.value = ''
+  }
 }
 </script>

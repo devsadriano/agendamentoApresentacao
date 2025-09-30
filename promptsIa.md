@@ -51,6 +51,79 @@ preciso que faca uma modificação no baseinput, quero que ele tenha suporte par
 
 
 --------------------------
+Crie o composable useAuth, coloque inicialmente as acoes de login e logouth.
+
+#file:supabase.instructions.md 
+
+Ao fazer o login, quero que reiderecione para a pagina index '/'
+
+Depois de criar o composable coloque no formulairo de  #file:LoginForm.vue   a ação de login
+
+Lembrando que já instalei o modulo supabase então não precisa instalar...
+
+Não crie um midwere pois o supabase ja faz proteger rotas autenticadas:
+
+Já tenho o arquivo .env já cirado então não precisa criar...
+
+
+
+---------------------------------
+porque vc não crio uma pagina de confirmacao?
+confirm.vue
+
+somente responda pra eu poder decidir o que fazer
+
+
+---------------------------------
+reparei tbm que vc nao mexeu no arquivo #file:nuxt.config.ts  
+
+vou disponibilizar uma imagem para analisar como exemplo
+
+somente responda nao faca nada quero ver sua resposta e depois decidir o que fazer ok?
+
+
+
+
+---------------------------
+atualize então o arquivo #file:nuxt.config.ts 
+
+
+
+
+--------------------------
+Seguindo essa logica de configuração do Supabase mais avançada analise o resto do codigo e verifique possiveis correções e melhorias siga sempre as instruções já fornecidas #file:supabase.instructions.md  e #file:nuxt4.instructions.md 
+
+
+
+
+----------------------
+✅ Criar estrutura de tipos em types
+✅ Corrigir composable useAuth
+✅ Atualizar página confirm.vue com cookie redirect
+✅ Corrigir imports nos componentes
+✅ Testar fluxo completo
+Posso começar com qual correção?
+
+pode implementar todas as sugestões
+
+
+
+
+
+-----------------------------------------
+verifique no console log erros de hidratação
+
+
+arrume esses erros de hidratação...
+
+
+
+
+
+
+
+
+
 
 
 

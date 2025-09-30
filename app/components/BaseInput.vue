@@ -131,6 +131,20 @@ const isFocused = ref(false)
 // Estado para controlar visibilidade da senha
 const showPassword = ref(false)
 
+// ID único para o input - usando um contador para evitar problemas de hidratação
+let inputCounter = 0
+const inputId = computed(() => {
+  if (props.id) return props.id
+  
+  // Só gera ID aleatório no cliente para evitar problemas de hidratação
+  if (import.meta.client) {
+    return `input-${Math.random().toString(36).substr(2, 9)}`
+  }
+  
+  // No servidor, usa um contador sequencial
+  return `input-${++inputCounter}`
+})
+
 // Tipo de input computado (para toggle de senha)
 const actualInputType = computed(() => {
   if (props.type === 'password' && showPassword.value) {
@@ -138,9 +152,6 @@ const actualInputType = computed(() => {
   }
   return props.type
 })
-
-// ID único para o input
-const inputId = computed(() => props.id || `input-${Math.random().toString(36).substr(2, 9)}`)
 
 const handleInput = (event: Event) => {
   const target = event.target as HTMLInputElement
