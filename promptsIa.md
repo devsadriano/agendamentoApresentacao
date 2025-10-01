@@ -150,7 +150,43 @@ remova configuraçções e deixa apenas os botoes abaixo:
 
 5 profissionais
 
+
+
+
+
 ----------------------------------------------
+pode converter para Heroicons!
+
+
+
+
+
+------------------------------------------
+Agora no rodabe sidebar, remova o email e o botao de sair
+
+no lugar coloque apenas um icone de usuario ou congigurações.. e escreva configurações...
+
+ai ao clicar nele vai abrir um menu dropdown mas ainda nao crie o menu apenas faca esse
+ajuste na sidebar rodape
+
+
+
+
+
+----------------------------------------
+agora crie componente menu dropdown que vai ter apenas duas opcoes...
+
+Perfil
+Sair
+
+para o perfil deixe sem nada por enquanto e para sair coloque acao de logout...
+
+incorpore o menu no sidebar
+
+
+
+
+---------------------------------
 
 
 
