@@ -106,12 +106,12 @@ const buttonClasses = computed(() => {
   // Variantes
   const variantClasses = {
     primary: [
-      'bg-primary-500',
+      'bg-blue-500',
       'text-white',
       'border-transparent',
-      'hover:bg-primary-600',
-      'focus:ring-primary-500',
-      'active:bg-primary-700',
+      'hover:bg-blue-600',
+      'focus:ring-blue-500',
+      'active:bg-blue-700',
       'shadow-soft',
       'hover:shadow-medium',
     ],
@@ -161,12 +161,12 @@ const buttonClasses = computed(() => {
     ],
     outline: [
       'bg-transparent',
-      'text-primary-600',
+      'text-blue-600',
       'border',
-      'border-primary-300',
-      'hover:bg-primary-50',
-      'focus:ring-primary-500',
-      'active:bg-primary-100',
+      'border-blue-300',
+      'hover:bg-blue-50',
+      'focus:ring-blue-500',
+      'active:bg-blue-100',
     ],
   }
 

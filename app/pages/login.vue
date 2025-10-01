@@ -1,7 +1,7 @@
 <template>
   <div class="min-h-screen flex">
     <!-- Coluna da Esquerda - Branding/Informações -->
-    <div class="hidden lg:flex lg:w-1/2 bg-gradient-to-br from-primary-500 via-primary-600 to-primary-700 relative overflow-hidden">
+    <div class="hidden lg:flex lg:w-1/2 bg-gradient-to-br from-blue-500 via-blue-600 to-blue-700 relative overflow-hidden">
       <!-- Background Pattern -->
       <div class="absolute inset-0 opacity-10">
         <div class="absolute inset-0" style="background-image: url('data:image/svg+xml,%3Csvg width=\'60\' height=\'60\' viewBox=\'0 0 60 60\' xmlns=\'http://www.w3.org/2000/svg\'%3E%3Cg fill=\'none\' fill-rule=\'evenodd\'%3E%3Cg fill=\'%23ffffff\' fill-opacity=\'0.1\'%3E%3Ccircle cx=\'30\' cy=\'30\' r=\'2\'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E');"></div>
@@ -54,7 +54,7 @@
         <!-- Logo mobile (visível apenas em telas pequenas) -->
         <div class="lg:hidden text-center mb-8">
           <div class="flex items-center justify-center mb-4">
-            <CalendarIcon class="w-10 h-10 text-primary-500" />
+            <CalendarIcon class="w-10 h-10 text-blue-500" />
             <h1 class="ml-2 text-2xl font-bold text-text-primary">AgendaPro</h1>
           </div>
         </div>

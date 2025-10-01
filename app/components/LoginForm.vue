@@ -47,7 +47,7 @@
             id="login-remember-me"
             name="login-remember-me"
             type="checkbox"
-            class="h-4 w-4 text-primary-600 focus:ring-primary-500 border-border-default rounded"
+            class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-border-default rounded"
           />
           <label for="login-remember-me" class="ml-2 block text-sm text-text-secondary">
             Lembrar de mim
@@ -55,7 +55,7 @@
         </div>
         
         <div class="text-sm">
-          <a href="#" class="font-medium text-primary-600 hover:text-primary-500 transition-colors">
+          <a href="#" class="font-medium text-blue-600 hover:text-blue-500 transition-colors">
             Esqueci minha senha
           </a>
         </div>
@@ -89,7 +89,7 @@
       <div class="text-center">
         <p class="text-sm text-text-secondary">
           Não tem uma conta?
-          <a href="#" class="font-medium text-primary-600 hover:text-primary-500 transition-colors">
+          <a href="#" class="font-medium text-blue-600 hover:text-blue-500 transition-colors">
             Criar conta
           </a>
         </p>

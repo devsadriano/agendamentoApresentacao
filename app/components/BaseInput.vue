@@ -249,9 +249,9 @@ const inputClasses = computed(() => {
     ]
   } else if (isFocused.value) {
     stateClasses = [
-      'border-primary-500',
-      'focus:border-primary-600',
-      'focus:ring-primary-500',
+      'border-blue-500',
+      'focus:border-blue-600',
+      'focus:ring-blue-500',
       'bg-white',
     ]
   } else {
@@ -259,22 +259,22 @@ const inputClasses = computed(() => {
     const variantClasses = {
       default: [
         'border-border-default',
-        'focus:border-primary-500',
-        'focus:ring-primary-500',
+        'focus:border-blue-500',
+        'focus:ring-blue-500',
         'bg-white',
         'hover:border-border-dark',
       ],
       filled: [
         'border-transparent',
-        'focus:border-primary-500',
-        'focus:ring-primary-500',
+        'focus:border-blue-500',
+        'focus:ring-blue-500',
         'bg-neutral-100',
         'hover:bg-neutral-200',
       ],
       borderless: [
         'border-transparent',
         'focus:border-transparent',
-        'focus:ring-primary-500',
+        'focus:ring-blue-500',
         'bg-transparent',
         'hover:bg-neutral-50',
       ],

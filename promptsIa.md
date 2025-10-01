@@ -119,6 +119,39 @@ arrume esses erros de hidratação...
 
 
 
+---------------------------------------
+Crie um componente sidebar coloque um cabecario, rodabe e alguns botoes de teste...
+
+depois cire um compoennte de layout...
+
+entao coloque o side bar no layout a esquerda...
+
+o layout vai ter sidebar e um espaco main do lado ...
+
+Depois disso, envolva a pagina index nesse layout para eu ver
+
+
+
+
+
+
+--------------------------------------
+No componente sidebar, quero que faca apenas alterações no corpo...
+
+remova configuraçções e deixa apenas os botoes abaixo:
+
+1 botao de Dashboard -> esse redireciona p pagina index
+
+2 Botao de Especialidades (ainda nao redirecona paara nada)
+
+3 Agendamentos 
+
+4 clientes
+
+5 profissionais
+
+----------------------------------------------
+
 
 
 

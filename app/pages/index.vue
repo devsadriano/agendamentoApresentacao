@@ -1,148 +1,210 @@
 <template>
-  <div class="min-h-screen bg-gradient-to-br from-blue-400 via-purple-500 to-pink-500">
-    <!-- Auth Section -->
-    <div class="absolute top-4 right-4">
-      <ClientOnly>
-        <div class="bg-white/20 backdrop-blur-sm rounded-lg p-4 text-white">
-          <div v-if="currentUser" class="flex items-center space-x-3">
-            <div>
-              <p class="text-sm font-medium">{{ currentUser.email }}</p>
-              <p class="text-xs opacity-75">Usuário logado</p>
+  <NuxtLayout>
+    <!-- Header da Dashboard -->
+    <div class="mb-8">
+      <div class="flex items-center justify-between">
+        <div>
+          <h1 class="text-3xl font-bold text-gray-900">Dashboard</h1>
+          <p class="text-gray-600 mt-1">Bem-vindo ao sistema de agendamento</p>
+        </div>
+        
+        <!-- Informações do usuário -->
+        <ClientOnly>
+          <div class="bg-white rounded-lg shadow-sm border p-4">
+            <div v-if="currentUser" class="flex items-center space-x-3">
+              <div class="w-10 h-10 bg-blue-600 rounded-full flex items-center justify-center text-white font-medium">
+                {{ currentUser.email?.charAt(0).toUpperCase() }}
+              </div>
+              <div>
+                <p class="text-sm font-medium text-gray-900">{{ currentUser.email }}</p>
+                <p class="text-xs text-gray-500">Usuário logado</p>
+              </div>
+              <button
+                @click="handleLogout"
+                :disabled="isLoading"
+                class="bg-red-500 hover:bg-red-600 disabled:opacity-50 px-3 py-1 rounded text-sm font-medium text-white transition-colors"
+              >
+                {{ isLoading ? 'Saindo...' : 'Sair' }}
+              </button>
             </div>
-            <button
-              @click="handleLogout"
-              :disabled="isLoading"
-              class="bg-red-500 hover:bg-red-600 disabled:opacity-50 px-3 py-1 rounded text-sm font-medium transition-colors"
-            >
-              {{ isLoading ? 'Saindo...' : 'Sair' }}
+            <div v-else>
+              <p class="text-sm text-gray-500">Não autenticado</p>
+            </div>
+          </div>
+          <template #fallback>
+            <div class="bg-white rounded-lg shadow-sm border p-4">
+              <p class="text-sm text-gray-500">Carregando...</p>
+            </div>
+          </template>
+        </ClientOnly>
+      </div>
+    </div>
+
+    <!-- Cards de estatísticas -->
+    <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+      <div class="bg-white rounded-lg shadow-sm border p-6">
+        <div class="flex items-center">
+          <div class="p-2 bg-blue-100 rounded-lg">
+            <svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2-2v16a2 2 0 002 2z"/>
+            </svg>
+          </div>
+          <div class="ml-4">
+            <p class="text-sm font-medium text-gray-600">Agendamentos Hoje</p>
+            <p class="text-2xl font-semibold text-gray-900">12</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="bg-white rounded-lg shadow-sm border p-6">
+        <div class="flex items-center">
+          <div class="p-2 bg-green-100 rounded-lg">
+            <svg class="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-9a2.25 2.25 0 11-4.5 0 2.25 2.25 0 014.5 0z"/>
+            </svg>
+          </div>
+          <div class="ml-4">
+            <p class="text-sm font-medium text-gray-600">Clientes Ativos</p>
+            <p class="text-2xl font-semibold text-gray-900">248</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="bg-white rounded-lg shadow-sm border p-6">
+        <div class="flex items-center">
+          <div class="p-2 bg-yellow-100 rounded-lg">
+            <svg class="w-6 h-6 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+            </svg>
+          </div>
+          <div class="ml-4">
+            <p class="text-sm font-medium text-gray-600">Serviços</p>
+            <p class="text-2xl font-semibold text-gray-900">8</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="bg-white rounded-lg shadow-sm border p-6">
+        <div class="flex items-center">
+          <div class="p-2 bg-purple-100 rounded-lg">
+            <svg class="w-6 h-6 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1"/>
+            </svg>
+          </div>
+          <div class="ml-4">
+            <p class="text-sm font-medium text-gray-600">Receita Mensal</p>
+            <p class="text-2xl font-semibold text-gray-900">R$ 12.450</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Conteúdo para demonstrar scroll -->
+    <div class="space-y-6">
+      <div class="bg-white rounded-lg shadow-sm border p-6">
+        <h2 class="text-xl font-semibold text-gray-900 mb-4">Próximos Agendamentos</h2>
+        <div class="space-y-3">
+          <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+            <div>
+              <p class="font-medium text-gray-900">João Silva</p>
+              <p class="text-sm text-gray-600">Corte de Cabelo - 14:00</p>
+            </div>
+            <span class="px-3 py-1 bg-green-100 text-green-800 text-sm rounded-full">Confirmado</span>
+          </div>
+          <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+            <div>
+              <p class="font-medium text-gray-900">Maria Santos</p>
+              <p class="text-sm text-gray-600">Manicure - 15:30</p>
+            </div>
+            <span class="px-3 py-1 bg-yellow-100 text-yellow-800 text-sm rounded-full">Pendente</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Mais conteúdo para demonstrar scroll -->
+      <div class="grid md:grid-cols-2 gap-6">
+        <div class="bg-white rounded-lg shadow-sm border p-6">
+          <h3 class="text-lg font-semibold text-gray-900 mb-4">Ações Rápidas</h3>
+          <div class="space-y-2">
+            <button class="w-full text-left p-3 hover:bg-gray-50 rounded-lg transition-colors">
+              <div class="flex items-center space-x-3">
+                <svg class="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/>
+                </svg>
+                <span class="font-medium">Novo Agendamento</span>
+              </div>
+            </button>
+            <button class="w-full text-left p-3 hover:bg-gray-50 rounded-lg transition-colors">
+              <div class="flex items-center space-x-3">
+                <svg class="w-5 h-5 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
+                </svg>
+                <span class="font-medium">Cadastrar Cliente</span>
+              </div>
             </button>
           </div>
-          <div v-else>
-            <p class="text-sm">Não autenticado</p>
+        </div>
+
+        <div class="bg-white rounded-lg shadow-sm border p-6">
+          <h3 class="text-lg font-semibold text-gray-900 mb-4">Estatísticas</h3>
+          <div class="space-y-4">
+            <div>
+              <div class="flex justify-between text-sm mb-1">
+                <span>Ocupação da semana</span>
+                <span>75%</span>
+              </div>
+              <div class="w-full bg-gray-200 rounded-full h-2">
+                <div class="bg-blue-600 h-2 rounded-full" style="width: 75%"></div>
+              </div>
+            </div>
+            <div>
+              <div class="flex justify-between text-sm mb-1">
+                <span>Meta mensal</span>
+                <span>45%</span>
+              </div>
+              <div class="w-full bg-gray-200 rounded-full h-2">
+                <div class="bg-green-600 h-2 rounded-full" style="width: 45%"></div>
+              </div>
+            </div>
           </div>
         </div>
-        <template #fallback>
-          <div class="bg-white/20 backdrop-blur-sm rounded-lg p-4 text-white">
-            <p class="text-sm">Carregando...</p>
-          </div>
-        </template>
-      </ClientOnly>
-    </div>
+      </div>
 
-    <div class="container mx-auto px-4 py-16">
-      <!-- Header -->
-      <header class="text-center mb-12">
-        <h1 class="text-5xl md:text-6xl font-bold text-white mb-4 drop-shadow-lg">
-          Teste Tailwind CSS
-        </h1>
-        <p class="text-xl text-white/90 max-w-2xl mx-auto">
-          Esta página demonstra alguns componentes e classes do Tailwind CSS funcionando no Nuxt 4
+      <!-- Conteúdo adicional para demonstrar scroll -->
+      <div class="bg-white rounded-lg shadow-sm border p-6">
+        <h3 class="text-lg font-semibold text-gray-900 mb-4">Teste de Scroll</h3>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div class="h-40 bg-gradient-to-br from-blue-100 to-blue-200 rounded-lg flex items-center justify-center">
+            <span class="text-blue-800 font-medium">Conteúdo 1</span>
+          </div>
+          <div class="h-40 bg-gradient-to-br from-green-100 to-green-200 rounded-lg flex items-center justify-center">
+            <span class="text-green-800 font-medium">Conteúdo 2</span>
+          </div>
+          <div class="h-40 bg-gradient-to-br from-purple-100 to-purple-200 rounded-lg flex items-center justify-center">
+            <span class="text-purple-800 font-medium">Conteúdo 3</span>
+          </div>
+        </div>
+        <p class="mt-4 text-gray-600">
+          Este conteúdo demonstra como o layout funciona com sidebar fixa à esquerda e área principal rolável. 
+          O sidebar permanece fixo enquanto o conteúdo principal pode ser rolado normalmente.
         </p>
-      </header>
-
-      <!-- Cards Section -->
-      <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
-        <!-- Card 1 -->
-        <div class="bg-white rounded-xl shadow-lg p-6 transform hover:scale-105 transition-transform duration-300">
-          <div class="w-12 h-12 bg-blue-500 rounded-lg flex items-center justify-center mb-4">
-            <svg class="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 20 20">
-              <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
-            </svg>
-          </div>
-          <h3 class="text-xl font-semibold text-gray-800 mb-2">Responsivo</h3>
-          <p class="text-gray-600">Design que se adapta a todos os tamanhos de tela</p>
-        </div>
-
-        <!-- Card 2 -->
-        <div class="bg-white rounded-xl shadow-lg p-6 transform hover:scale-105 transition-transform duration-300">
-          <div class="w-12 h-12 bg-green-500 rounded-lg flex items-center justify-center mb-4">
-            <svg class="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 20 20">
-              <path d="M13 6a3 3 0 11-6 0 3 3 0 016 0zM18 8a2 2 0 11-4 0 2 2 0 014 0zM14 15a4 4 0 00-8 0v3h8v-3z"/>
-            </svg>
-          </div>
-          <h3 class="text-xl font-semibold text-gray-800 mb-2">Componentes</h3>
-          <p class="text-gray-600">Elementos de UI reutilizáveis e flexíveis</p>
-        </div>
-
-        <!-- Card 3 -->
-        <div class="bg-white rounded-xl shadow-lg p-6 transform hover:scale-105 transition-transform duration-300 md:col-span-2 lg:col-span-1">
-          <div class="w-12 h-12 bg-purple-500 rounded-lg flex items-center justify-center mb-4">
-            <svg class="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 20 20">
-              <path d="M3 4a1 1 0 011-1h12a1 1 0 011 1v2a1 1 0 01-1 1H4a1 1 0 01-1-1V4zM3 10a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H4a1 1 0 01-1-1v-6zM14 9a1 1 0 00-1 1v6a1 1 0 001 1h2a1 1 0 001-1v-6a1 1 0 00-1-1h-2z"/>
-            </svg>
-          </div>
-          <h3 class="text-xl font-semibold text-gray-800 mb-2">Utilitários</h3>
-          <p class="text-gray-600">Classes utilitárias para estilização rápida</p>
-        </div>
-      </div>
-
-      <!-- Button Section -->
-      <div class="text-center mb-12">
-        <h2 class="text-3xl font-bold text-white mb-6">Botões Estilizados</h2>
-        <div class="flex flex-wrap justify-center gap-4">
-          <button class="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-6 rounded-lg transition-colors duration-200">
-            Primário
-          </button>
-          <button class="bg-transparent border-2 border-white text-white hover:bg-white hover:text-purple-600 font-semibold py-3 px-6 rounded-lg transition-all duration-200">
-            Secundário
-          </button>
-          <button class="bg-green-500 hover:bg-green-600 text-white font-semibold py-3 px-6 rounded-lg shadow-lg hover:shadow-xl transition-all duration-200">
-            Sucesso
-          </button>
-        </div>
-      </div>
-
-      <!-- Typography Section -->
-      <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-8 mb-12">
-        <h2 class="text-3xl font-bold text-white mb-6 text-center">Tipografia</h2>
-        <div class="space-y-4 text-white">
-          <p class="text-4xl font-bold">Título Principal</p>
-          <p class="text-2xl font-semibold">Subtítulo</p>
-          <p class="text-lg">Texto normal com tamanho médio para leitura confortável</p>
-          <p class="text-sm text-white/80">Texto pequeno para informações secundárias</p>
-        </div>
-      </div>
-
-      <!-- Grid Layout Test -->
-      <div class="bg-white rounded-2xl p-8">
-        <h2 class="text-3xl font-bold text-gray-800 mb-6 text-center">Layout Grid</h2>
-        <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
-          <div class="bg-red-100 border-2 border-red-300 rounded-lg p-4 text-center">
-            <div class="w-full h-20 bg-red-400 rounded mb-2"></div>
-            <span class="text-red-800 font-medium">Item 1</span>
-          </div>
-          <div class="bg-yellow-100 border-2 border-yellow-300 rounded-lg p-4 text-center">
-            <div class="w-full h-20 bg-yellow-400 rounded mb-2"></div>
-            <span class="text-yellow-800 font-medium">Item 2</span>
-          </div>
-          <div class="bg-green-100 border-2 border-green-300 rounded-lg p-4 text-center">
-            <div class="w-full h-20 bg-green-400 rounded mb-2"></div>
-            <span class="text-green-800 font-medium">Item 3</span>
-          </div>
-          <div class="bg-blue-100 border-2 border-blue-300 rounded-lg p-4 text-center">
-            <div class="w-full h-20 bg-blue-400 rounded mb-2"></div>
-            <span class="text-blue-800 font-medium">Item 4</span>
-          </div>
-        </div>
       </div>
     </div>
-  </div>
+  </NuxtLayout>
 </template>
 
 <script setup lang="ts">
-// Composable de autenticação (import explícito conforme Nuxt 4 guidelines)
+// Imports explícitos conforme Nuxt 4 guidelines
+import { useAuth } from '~/composables/useAuth'
+
+// Composable de autenticação
 const { logout, isLoading, currentUser } = useAuth()
 
-// Configurações da página
-definePageMeta({
-  title: 'Teste Tailwind CSS'
-})
-
-// Use head para SEO
+// Configuração da página
 useHead({
-  title: 'Teste Tailwind CSS - Nuxt 4',
+  title: 'Dashboard - Sistema de Agendamento',
   meta: [
-    { name: 'description', content: 'Página de teste para demonstrar funcionalidades do Tailwind CSS no Nuxt 4' }
+    { name: 'description', content: 'Dashboard do sistema de agendamento' }
   ]
 })
 
@@ -150,4 +212,10 @@ useHead({
 const handleLogout = async () => {
   await logout()
 }
+
+// Lifecycle hooks
+onMounted(() => {
+  console.log('Página Dashboard carregada')
+  console.log('Usuário atual:', currentUser.value?.email)
+})
 </script>
