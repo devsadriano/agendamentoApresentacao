@@ -3,7 +3,10 @@
     <!-- Dropdown Menu -->
     <div 
       v-if="isOpen"
-      class="absolute bottom-full left-0 mb-2 w-48 bg-white rounded-lg shadow-lg border border-gray-200 py-2 z-50"
+      :class="[
+        'absolute bottom-full mb-2 w-48 bg-white rounded-lg shadow-lg border border-gray-200 py-2 z-50',
+        isCollapsed ? 'left-16' : 'left-0'
+      ]"
     >
       <!-- Perfil -->
       <button 
@@ -38,6 +41,7 @@ import { useAuth } from '~/composables/useAuth'
 // Props
 interface Props {
   isOpen: boolean
+  isCollapsed?: boolean
 }
 
 defineProps<Props>()

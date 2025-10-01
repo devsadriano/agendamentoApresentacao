@@ -187,9 +187,21 @@ incorpore o menu no sidebar
 
 
 ---------------------------------
+agora quero que vc deixe o menu sidebar colapsado...
+
+coloque uma seta no header dele para fechar e abrir...
+
+ao fechar somente os icones ficam visiveis e o texto nao...
 
 
 
+--------------------------------------------
+no footer quando colapsado eu clico e nao abre o menu dropdown, tem que arrumar isso
+
+
+
+
+--------------------------------------
 
 
 
