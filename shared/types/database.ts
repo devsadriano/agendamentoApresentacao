@@ -14,6 +14,12 @@ export interface UserState {
   error: string | null
 }
 
+// Tipos para especialidades baseado na tabela ag_especialidades
+export interface Especialidade {
+  id: number
+  nome: string
+}
+
 // Tipos para as actions do store
 export interface UserActions {
   fetchProfile(): Promise<void>
