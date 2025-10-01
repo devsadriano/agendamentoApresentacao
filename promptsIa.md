@@ -202,6 +202,25 @@ no footer quando colapsado eu clico e nao abre o menu dropdown, tem que arrumar 
 
 
 --------------------------------------
+1 limpe totalmente a pagina index, deixe em branco, camos comecar do zero
+
+2 crie a pagina especialidades
+
+3 crie a pagina profissionais
+
+4 cire a pagina clientes
+
+5 crie a pagina agendamentos
+
+--- deixe todas as pagina em branco por enquanto, apenas o titulo da pagina pode por
+
+ai atualize os botoes do sidebar para redirecionar
+
+
+
+-----------------------------------
+
+
 
 
 

@@ -37,17 +37,19 @@
         <span v-if="!isCollapsed" class="font-medium">Dashboard</span>
       </NuxtLink>
 
-      <!-- 2. Especialidades - ainda não redireciona para nada -->
-      <button 
+      <!-- 2. Especialidades - redireciona para página especialidades -->
+      <NuxtLink 
+        to="/especialidades" 
         :class="[
-          'w-full flex items-center p-3 rounded-lg hover:bg-gray-100 transition-colors group text-left',
-          isCollapsed ? 'justify-center' : 'space-x-3'
+          'flex items-center p-3 rounded-lg hover:bg-gray-100 transition-colors group',
+          isCollapsed ? 'justify-center' : 'space-x-3',
+          { 'bg-blue-50 text-blue-600 border-r-2 border-blue-600': $route.path === '/especialidades' }
         ]"
         :title="isCollapsed ? 'Especialidades' : ''"
       >
         <LightBulbIcon class="w-5 h-5 flex-shrink-0" />
         <span v-if="!isCollapsed" class="font-medium">Especialidades</span>
-      </button>
+      </NuxtLink>
 
       <!-- 3. Agendamentos -->
       <NuxtLink 
