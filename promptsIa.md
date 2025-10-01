@@ -275,6 +275,12 @@ FAÇA APENAS O QUE FALEI NÃO MEXA EM OUTROS ARQUIVOS COMO COMPOSABLE E OUTROS..
 
 
 -------------------------------------
+shared\types\user.ts TROQUE O NOME DO ARQUIVO POR database.ts
+
+
+
+
+--------------------------------------
 AGORA, para buscar a info do user e salvar no store, isso da pra fazer direto no store, certo? ou é obrigatorio ter um composable?? me responda e nao faca nada.
 
 Disponibilizei um exemplo de como seria o modo que quero que seja.
@@ -283,4 +289,51 @@ Disponibilizei um exemplo de como seria o modo que quero que seja.
 
 
 
+----------------------------------------
+agora analise o meu codigo #file:user.ts e responda :
+
+AGORA, para buscar a info do user e salvar no store, isso da pra fazer direto no store, certo? ou é obrigatorio ter um composable?? me responda e nao faca nada.
+
+
+
+
+
+
+-------------------------------------
+percebi que no codigo não tem um return do estado e das actions estou certo? somente responda a pergunta
+
+
+------------------------------------
+sim
+
+
+------------------------------------
+uma duvida as pastas e os arquivos 
+1 shared\types\
+
+2 stores\user.ts
+
+não deveriam estar dentro a pasta app?
+
+siga o modelo das isntruções #file:nuxt4.instructions.md e #file:supabase.instructions.md 
+
+somente responda para depois eu decidir o que fazer ok?
+
+
+
+
+
+-----------------------------------
+pode fazer
+
+
+
+
+
+-------------------------------------
+beleza, agora que temos o pinia, quero que ao inicializar a aplicação, busque os dados do user... e salve no pinia, nao faca nada alem disso.
+
+e para testar coloque na pagina dashboard o nome do user que vem do pinia...
+
+e cuidado com os problemas de ssr e hidratação
  
