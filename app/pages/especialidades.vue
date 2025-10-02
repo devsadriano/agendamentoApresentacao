@@ -32,16 +32,24 @@
         :error="error"
         :is-admin="isAdmin"
         @editar="abrirModalEdicao"
-        @deletar="deletarEspecialidade"
+        @deletar="confirmarDeletar"
       />
     </div>
 
-    <!-- Modal -->
+    <!-- Modal de Edição/Criação -->
     <ModalEspecialidade
       v-model="modalAberto"
       :is-edicao="modalEdicao"
       :especialidade="especialidadeEdicao"
       @success="onModalSuccess"
+    />
+
+    <!-- Modal de Confirmação -->
+    <ModalConfirmacao
+      v-model="modalConfirmacao"
+      message="Tem certeza que deseja deletar esta especialidade?"
+      @confirm="executarDelecao"
+      @close="modalConfirmacao = false"
     />
   </NuxtLayout>
 </template>
@@ -50,7 +58,7 @@
 import { PlusIcon } from '@heroicons/vue/24/outline'
 import type { Especialidade } from '../../shared/types/database'
 
-const { buscarEspecialidades } = useProfissionais()
+const { buscarEspecialidades, deletarEspecialidade } = useProfissionais()
 const userStore = useUserStore()
 
 // Estados reativos
@@ -60,6 +68,8 @@ const error = ref<string | null>(null)
 const modalAberto = ref(false)
 const modalEdicao = ref(false)
 const especialidadeEdicao = ref<Especialidade | null>(null)
+const modalConfirmacao = ref(false)
+const especialidadeParaDeletar = ref<number | null>(null)
 
 // Computed para verificar se é admin
 const isAdmin = computed(() => userStore.profile?.role === 'admin')
@@ -82,10 +92,25 @@ const abrirModalEdicao = (id: number) => {
   }
 }
 
-// Método para deletar (placeholder)
-const deletarEspecialidade = (id: number) => {
-  console.log('Deletar especialidade ID:', id)
-  // TODO: Implementar função de deletar
+// Método para abrir confirmação de deletar
+const confirmarDeletar = (id: number) => {
+  especialidadeParaDeletar.value = id
+  modalConfirmacao.value = true
+}
+
+// Método para executar a exclusão
+const executarDelecao = async () => {
+  if (!especialidadeParaDeletar.value) return
+  
+  try {
+    await deletarEspecialidade(especialidadeParaDeletar.value)
+    await carregarEspecialidades()
+    modalConfirmacao.value = false
+    especialidadeParaDeletar.value = null
+  } catch (error) {
+    console.error('Erro ao deletar especialidade:', error)
+    // TODO: Mostrar notificação de erro
+  }
 }
 
 // Método chamado quando o modal tem sucesso

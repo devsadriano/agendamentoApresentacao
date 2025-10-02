@@ -711,7 +711,18 @@ tem como abrir ja com o valor?
 
 
 ----------------------------------------
+no supabase crio uma politica rls para deletar
 
+
+
+
+-------------------------------------
+muito bem...
+Agora no composable crie a funcao de deletar o registro ...
+
+para nesse caso nao preciasa da funcao rpc, pode-se fazer um delete direto na tabela...
+
+apos criar a funcao no composable, vc implementa na tabela, ou seja, ao clicar no icone de trash, antes exibe um modal de alerta, e se confirmado executa a acao 
 
 
 
