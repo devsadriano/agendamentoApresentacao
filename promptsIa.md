@@ -430,3 +430,6 @@ show, agora ao clicar no botao de add que está dentro do #  quero que abra esse
 entao veja se o melhor local para colocar o modal e no componente eou na pagina # que é onde está o compoennte tabela...
 
 faca apenas abrir o modal por enquanto  com o idedicao = false
+
+
+------------------------------------
