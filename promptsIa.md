@@ -727,4 +727,15 @@ apos criar a funcao no composable, vc implementa na tabela, ou seja, ao clicar n
 
 
 
+--------------------------
+5.3.13 Tabela de Profissionais
+nessa aula foi feito tabela ag_profissionais
+
+
+------------------------------
+
+
+
+
+
 
