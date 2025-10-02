@@ -399,3 +399,10 @@ ainda nao coloque acao
 
 
 
+------------------------------------
+show...
+
+agora, os botoes de acao e botoao de add so podem estar habilitados caso o user seja "admin" essa info esta no campo role do store user...
+
+
+

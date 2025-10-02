@@ -15,6 +15,7 @@
         <BaseButton
           variant="primary"
           size="md"
+          :disabled="!isAdmin"
         >
           <template #icon-left>
             <PlusIcon class="h-4 w-4" />
@@ -28,6 +29,7 @@
         :especialidades="especialidades"
         :loading="loading"
         :error="error"
+        :is-admin="isAdmin"
       />
     </div>
   </NuxtLayout>
@@ -38,11 +40,15 @@ import { PlusIcon } from '@heroicons/vue/24/outline'
 import type { Especialidade } from '../../shared/types/database'
 
 const { buscarEspecialidades } = useProfissionais()
+const userStore = useUserStore()
 
 // Estados reativos
 const especialidades = ref<Especialidade[]>([])
 const loading = ref(false)
 const error = ref<string | null>(null)
+
+// Computed para verificar se é admin
+const isAdmin = computed(() => userStore.profile?.role === 'admin')
 
 // Carregar especialidades ao montar a página
 onMounted(async () => {

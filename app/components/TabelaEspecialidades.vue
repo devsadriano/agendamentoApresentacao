@@ -43,7 +43,13 @@
               <!-- Botão Editar -->
               <button
                 type="button"
-                class="text-blue-600 hover:text-blue-900 p-1 rounded hover:bg-blue-50 transition-colors"
+                :disabled="!isAdmin"
+                :class="[
+                  'p-1 rounded transition-colors',
+                  isAdmin 
+                    ? 'text-blue-600 hover:text-blue-900 hover:bg-blue-50' 
+                    : 'text-gray-400 cursor-not-allowed'
+                ]"
                 title="Editar especialidade"
               >
                 <PencilIcon class="h-4 w-4" />
@@ -52,7 +58,13 @@
               <!-- Botão Deletar -->
               <button
                 type="button"
-                class="text-red-600 hover:text-red-900 p-1 rounded hover:bg-red-50 transition-colors"
+                :disabled="!isAdmin"
+                :class="[
+                  'p-1 rounded transition-colors',
+                  isAdmin 
+                    ? 'text-red-600 hover:text-red-900 hover:bg-red-50' 
+                    : 'text-gray-400 cursor-not-allowed'
+                ]"
                 title="Deletar especialidade"
               >
                 <TrashIcon class="h-4 w-4" />
@@ -74,10 +86,12 @@ interface Props {
   especialidades: Especialidade[]
   loading?: boolean
   error?: string | null
+  isAdmin?: boolean
 }
 
 const props = withDefaults(defineProps<Props>(), {
   loading: false,
-  error: null
+  error: null,
+  isAdmin: false
 })
 </script>
