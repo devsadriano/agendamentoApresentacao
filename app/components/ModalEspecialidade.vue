@@ -43,6 +43,9 @@ const emit = defineEmits<{
   success: []
 }>()
 
+// Composable para ações de especialidades
+const { inserirEspecialidade } = useProfissionais()
+
 // Estados reativos
 const loading = ref(false)
 const form = ref({
@@ -96,20 +99,27 @@ const handleConfirm = async () => {
   loading.value = true
   
   try {
-    // TODO: Implementar lógica de salvar/atualizar
-    console.log('Dados para salvar:', {
-      isEdicao: props.isEdicao,
-      especialidadeId: props.especialidadeId,
-      nome: form.value.nome.trim()
-    })
-    
-    // Simular delay da API
-    await new Promise(resolve => setTimeout(resolve, 1000))
-    
-    emit('success')
-    handleClose()
+    if (props.isEdicao) {
+      // TODO: Implementar edição
+      console.log('Editando especialidade:', {
+        id: props.especialidadeId,
+        nome: form.value.nome.trim()
+      })
+    } else {
+      // Inserir nova especialidade
+      const response = await inserirEspecialidade(form.value.nome.trim())
+      
+      if (response.success) {
+        console.log('Especialidade criada:', response.message)
+        emit('success')
+        handleClose()
+      } else {
+        errors.value.nome = response.message
+      }
+    }
   } catch (error) {
     console.error('Erro ao salvar especialidade:', error)
+    errors.value.nome = 'Erro ao salvar especialidade. Tente novamente.'
   } finally {
     loading.value = false
   }

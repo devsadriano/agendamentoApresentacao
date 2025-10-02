@@ -1,5 +1,11 @@
 import type { Especialidade } from '../../shared/types/database'
 
+// Tipo para o retorno da função de inserir
+interface ApiResponse {
+  success: boolean
+  message: string
+}
+
 export const useProfissionais = () => {
   const supabase = useSupabaseClient()
 
@@ -28,7 +34,29 @@ export const useProfissionais = () => {
     }
   }
 
+  // Inserir especialidade
+  const inserirEspecialidade = async (nome: string): Promise<ApiResponse> => {
+    try {
+      const { data, error } = await supabase
+        .rpc('ag_add_especialidade', {
+          p_nome: nome
+        } as any)
+
+      if (error) {
+        console.error('Erro ao inserir especialidade:', error)
+        throw error
+      }
+
+      return data as ApiResponse
+
+    } catch (error) {
+      console.error('Erro ao inserir especialidade:', error)
+      throw error
+    }
+  }
+
   return {
-    buscarEspecialidades
+    buscarEspecialidades,
+    inserirEspecialidade
   }
 }

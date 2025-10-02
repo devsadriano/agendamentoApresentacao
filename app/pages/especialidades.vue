@@ -38,6 +38,7 @@
     <ModalEspecialidade
       v-model="modalAberto"
       :is-edicao="false"
+      @success="onModalSuccess"
     />
   </NuxtLayout>
 </template>
@@ -63,8 +64,14 @@ const abrirModal = () => {
   modalAberto.value = true
 }
 
-// Carregar especialidades ao montar a página
-onMounted(async () => {
+// Método chamado quando o modal tem sucesso
+const onModalSuccess = async () => {
+  // Recarregar a lista de especialidades
+  await carregarEspecialidades()
+}
+
+// Função para carregar especialidades
+const carregarEspecialidades = async () => {
   loading.value = true
   error.value = null
   
@@ -76,5 +83,10 @@ onMounted(async () => {
   } finally {
     loading.value = false
   }
+}
+
+// Carregar especialidades ao montar a página
+onMounted(async () => {
+  await carregarEspecialidades()
 })
 </script>
