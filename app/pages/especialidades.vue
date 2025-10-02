@@ -31,13 +31,16 @@
         :loading="loading"
         :error="error"
         :is-admin="isAdmin"
+        @editar="abrirModalEdicao"
+        @deletar="deletarEspecialidade"
       />
     </div>
 
     <!-- Modal -->
     <ModalEspecialidade
       v-model="modalAberto"
-      :is-edicao="false"
+      :is-edicao="modalEdicao"
+      :especialidade="especialidadeEdicao"
       @success="onModalSuccess"
     />
   </NuxtLayout>
@@ -55,13 +58,34 @@ const especialidades = ref<Especialidade[]>([])
 const loading = ref(false)
 const error = ref<string | null>(null)
 const modalAberto = ref(false)
+const modalEdicao = ref(false)
+const especialidadeEdicao = ref<Especialidade | null>(null)
 
 // Computed para verificar se é admin
 const isAdmin = computed(() => userStore.profile?.role === 'admin')
 
-// Método para abrir o modal
+// Método para abrir o modal de criação
 const abrirModal = () => {
+  modalEdicao.value = false
+  especialidadeEdicao.value = null
   modalAberto.value = true
+}
+
+// Método para abrir o modal de edição
+const abrirModalEdicao = (id: number) => {
+  // Buscar a especialidade nos dados já carregados
+  const especialidade = especialidades.value.find(e => e.id === id)
+  if (especialidade) {
+    modalEdicao.value = true
+    especialidadeEdicao.value = especialidade
+    modalAberto.value = true
+  }
+}
+
+// Método para deletar (placeholder)
+const deletarEspecialidade = (id: number) => {
+  console.log('Deletar especialidade ID:', id)
+  // TODO: Implementar função de deletar
 }
 
 // Método chamado quando o modal tem sucesso

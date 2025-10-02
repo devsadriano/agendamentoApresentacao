@@ -55,8 +55,31 @@ export const useProfissionais = () => {
     }
   }
 
+  // Editar especialidade
+  const editarEspecialidade = async (id: number, nome: string): Promise<ApiResponse> => {
+    try {
+      const { data, error } = await supabase
+        .rpc('ag_update_especialidade', {
+          p_id: id,
+          p_nome: nome
+        } as any)
+
+      if (error) {
+        console.error('Erro ao editar especialidade:', error)
+        throw error
+      }
+
+      return data as ApiResponse
+
+    } catch (error) {
+      console.error('Erro ao editar especialidade:', error)
+      throw error
+    }
+  }
+
   return {
     buscarEspecialidades,
-    inserirEspecialidade
+    inserirEspecialidade,
+    editarEspecialidade
   }
 }

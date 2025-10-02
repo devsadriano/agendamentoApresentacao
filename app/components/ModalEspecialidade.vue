@@ -30,12 +30,12 @@ import type { Especialidade } from '../../shared/types/database'
 interface Props {
   modelValue: boolean
   isEdicao?: boolean
-  especialidadeId?: number | null
+  especialidade?: Especialidade | null
 }
 
 const props = withDefaults(defineProps<Props>(), {
   isEdicao: false,
-  especialidadeId: null
+  especialidade: null
 })
 
 const emit = defineEmits<{
@@ -44,7 +44,7 @@ const emit = defineEmits<{
 }>()
 
 // Composable para ações de especialidades
-const { inserirEspecialidade } = useProfissionais()
+const { inserirEspecialidade, editarEspecialidade } = useProfissionais()
 
 // Estados reativos
 const loading = ref(false)
@@ -99,23 +99,22 @@ const handleConfirm = async () => {
   loading.value = true
   
   try {
-    if (props.isEdicao) {
-      // TODO: Implementar edição
-      console.log('Editando especialidade:', {
-        id: props.especialidadeId,
-        nome: form.value.nome.trim()
-      })
+    let response: any
+    
+    if (props.isEdicao && props.especialidade) {
+      // Editar especialidade existente
+      response = await editarEspecialidade(props.especialidade.id, form.value.nome.trim())
     } else {
       // Inserir nova especialidade
-      const response = await inserirEspecialidade(form.value.nome.trim())
-      
-      if (response.success) {
-        console.log('Especialidade criada:', response.message)
-        emit('success')
-        handleClose()
-      } else {
-        errors.value.nome = response.message
-      }
+      response = await inserirEspecialidade(form.value.nome.trim())
+    }
+    
+    if (response.success) {
+      console.log(props.isEdicao ? 'Especialidade editada:' : 'Especialidade criada:', response.message)
+      emit('success')
+      handleClose()
+    } else {
+      errors.value.nome = response.message
     }
   } catch (error) {
     console.error('Erro ao salvar especialidade:', error)
@@ -130,28 +129,14 @@ const handleClose = () => {
   modalVisible.value = false
 }
 
-// Carregar dados para edição
-const loadEspecialidade = async () => {
-  if (!props.isEdicao || !props.especialidadeId) {
+// Carregar dados para edição (usando dados passados diretamente)
+const loadEspecialidade = () => {
+  if (!props.isEdicao || !props.especialidade) {
     return
   }
   
-  loading.value = true
-  
-  try {
-    // TODO: Implementar busca da especialidade por ID
-    console.log('Carregando especialidade ID:', props.especialidadeId)
-    
-    // Simular carregamento
-    await new Promise(resolve => setTimeout(resolve, 500))
-    
-    // Dados simulados - substituir pela busca real
-    form.value.nome = 'Especialidade de exemplo'
-  } catch (error) {
-    console.error('Erro ao carregar especialidade:', error)
-  } finally {
-    loading.value = false
-  }
+  // Preencher formulário com dados já disponíveis
+  form.value.nome = props.especialidade.nome
 }
 
 // Watchers
@@ -160,7 +145,7 @@ watch(
   (newValue) => {
     if (newValue) {
       resetForm()
-      if (props.isEdicao && props.especialidadeId) {
+      if (props.isEdicao && props.especialidade) {
         loadEspecialidade()
       }
     }

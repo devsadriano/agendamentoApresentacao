@@ -51,6 +51,7 @@
                     : 'text-gray-400 cursor-not-allowed'
                 ]"
                 title="Editar especialidade"
+                @click="handleEditar(especialidade.id)"
               >
                 <PencilIcon class="h-4 w-4" />
               </button>
@@ -66,6 +67,7 @@
                     : 'text-gray-400 cursor-not-allowed'
                 ]"
                 title="Deletar especialidade"
+                @click="handleDeletar(especialidade.id)"
               >
                 <TrashIcon class="h-4 w-4" />
               </button>
@@ -94,4 +96,17 @@ const props = withDefaults(defineProps<Props>(), {
   error: null,
   isAdmin: false
 })
+
+const emit = defineEmits<{
+  editar: [id: number]
+  deletar: [id: number]
+}>()
+
+const handleEditar = (id: number) => {
+  emit('editar', id)
+}
+
+const handleDeletar = (id: number) => {
+  emit('deletar', id)
+}
 </script>

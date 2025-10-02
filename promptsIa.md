@@ -611,3 +611,109 @@ feito isso imcorpore a função no modal de add especialidades, que e gerenciado
 
 
 
+
+
+------------------------------------
+no gpt navegador
+
+agora, na mesma linha, quero ua função para editar o registro... essa função recebe o id e o novo registro... procura na tabela e edita... entao da mesma forma verifica se e admim, etc, feedback igual
+
+create or replace function public.ag_update_especialidade(p_id bigint, p_nome text)
+returns json
+language plpgsql
+security definer
+set search_path = public
+as $$
+declare
+    v_user_id uuid;
+    v_role text;
+    v_exists boolean;
+begin
+    -- Identifica o usuário autenticado
+    v_user_id := auth.uid();
+
+    if v_user_id is null then
+        return json_build_object(
+            'success', false,
+            'message', 'Usuário não autenticado.'
+        );
+    end if;
+
+    -- Verifica papel do usuário
+    select role into v_role
+    from public.ag_profiles
+    where user_id = v_user_id;
+
+    if v_role is distinct from 'admin' then
+        return json_build_object(
+            'success', false,
+            'message', 'Permissão negada. Apenas administradores podem editar especialidades.'
+        );
+    end if;
+
+    -- Verifica se existe o registro
+    select exists (
+        select 1 from public.ag_especialidades where id = p_id
+    ) into v_exists;
+
+    if not v_exists then
+        return json_build_object(
+            'success', false,
+            'message', format('Especialidade com id=%s não encontrada.', p_id)
+        );
+    end if;
+
+    -- Atualiza o registro
+    update public.ag_especialidades
+    set nome_espec = p_nome
+    where id = p_id;
+
+    return json_build_object(
+        'success', true,
+        'message', format('Especialidade id=%s atualizada com sucesso.', p_id)
+    );
+end;
+$$;
+
+
+
+select public.ag_update_especialidade(3, 'Clínica Geral');
+
+
+
+------------------------------------------
+agora crie a função para editar 
+
+
+let { data, error } = await supabase
+  .rpc('ag_update_especialidade', {
+    p_id, 
+    p_nome
+  })
+if (error) console.error(error)
+else console.log(data)
+
+
+o retorno é o mesmo e nesse caso dentro da tabela, ao clicar no botao editar, abre o modal, passa o isEdicao = true e passa o id tbm que esta na tabela, e no modal o botao de editar ou cancelar
+
+
+
+
+
+
+
+-----------------------------------------
+ok, deu certo, no entanto percebo que ao abrir o modal ele demora carregar os dados
+
+tem como abrir ja com o valor? 
+
+
+
+
+----------------------------------------
+
+
+
+
+
+
