@@ -357,3 +357,45 @@ create table public.ag_especialidades (
  e coloque essa funcao de buscar essas especialidades...
 
  atenção nao faça nada alem do que foi solicitado
+
+
+
+
+
+
+--------------------------------------------
+arrume essa pagina para que o titulo fique no header, no topo e abaixo ficará o conteudo que vou lhe dizer mais tarde
+
+
+------------------------------------------
+remova esses fundos e bordas, apenas o texto mesmo
+
+
+
+---------------------------------------
+crie um compoennte tabela de especialidade
+
+esse componente vai listar a especialidade, # ...
+
+coloque esse compoennte na pagina especialidade ... e ja use o composable # para popular a tabela assim que a pagina for montada
+
+
+
+
+--------------------------------------------
+agora na tabela, coloque um campo de acao para editar e deletar...
+
+E coloque icones buttons... use o lib de icones que temos no sistema...
+
+nao coloque nenhuma acao ainda apenas os botoes
+
+
+
+
+---------------------------------------
+coloque em algum lugar, acho que em cima da tabela, o botao de add use o #basebut para mantar a consistencia... 
+
+ainda nao coloque acao
+
+
+
