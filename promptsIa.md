@@ -406,3 +406,27 @@ agora, os botoes de acao e botoao de add so podem estar habilitados caso o user 
 
 
 
+------------------------------------
+crie um modal base para a aplicacao.. esse modal base deve ter header espaco para conteudo principal e footer com os botoes de acao confirmar cancelar ttc...
+
+depoosi qe cira rmodal base crie modal para inserir/editar espececialidade e use esse modal base com base...
+
+use os botoes reutilizaveis e inputs reutilizaveis que temos no projeto...
+
+
+Esse modal deve receber um parametro isEdicao ocm boolean com padrao falso...
+
+Ou seja se for edicao e para editar um registro , se for edicao   = true recebe tbm o id do registro, se for edicao = false o id nao precisa pois sera um novo registro...
+
+faco isso por enquanto... depois que criar criar o modal me informe que eu digo como iremos usalo
+
+
+
+
+
+------------------------------------
+show, agora ao clicar no botao de add que está dentro do #  quero que abra esse modal..
+
+entao veja se o melhor local para colocar o modal e no componente eou na pagina # que é onde está o compoennte tabela...
+
+faca apenas abrir o modal por enquanto  com o idedicao = false

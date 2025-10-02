@@ -16,6 +16,7 @@
           variant="primary"
           size="md"
           :disabled="!isAdmin"
+          @click="abrirModal"
         >
           <template #icon-left>
             <PlusIcon class="h-4 w-4" />
@@ -32,6 +33,12 @@
         :is-admin="isAdmin"
       />
     </div>
+
+    <!-- Modal -->
+    <ModalEspecialidade
+      v-model="modalAberto"
+      :is-edicao="false"
+    />
   </NuxtLayout>
 </template>
 
@@ -46,9 +53,15 @@ const userStore = useUserStore()
 const especialidades = ref<Especialidade[]>([])
 const loading = ref(false)
 const error = ref<string | null>(null)
+const modalAberto = ref(false)
 
 // Computed para verificar se é admin
 const isAdmin = computed(() => userStore.profile?.role === 'admin')
+
+// Método para abrir o modal
+const abrirModal = () => {
+  modalAberto.value = true
+}
 
 // Carregar especialidades ao montar a página
 onMounted(async () => {
