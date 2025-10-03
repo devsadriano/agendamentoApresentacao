@@ -1079,3 +1079,13 @@ Coloque apenas os botoes nao coloque as ações dos botoes pois irei fazer depoi
 -------------------------------------------
 ok, mas para esse caso especifico nao precisa a verificacao de admin, pois qualquer user do sistema podera fazer as modificacoes
 
+
+
+
+-------------------------------------------
+Agora crie a funcao para INSERIR o cliente na tabela... crie apenas a funcao por enquanto...
+
+essa funcao os campos cpf e nome sao obrigatorios, o restante e opcional..
+
+
+ja os campos id e creat at vc sabe q sao automaitcos e n precisamos nos preocupar

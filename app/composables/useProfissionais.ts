@@ -217,11 +217,42 @@ export const useProfissionais = () => {
     }
   }
 
+  // Inserir cliente
+  const inserirCliente = async (
+    nome_cliente: string, 
+    cpf: string, 
+    endereco?: string | null, 
+    email?: string | null, 
+    telefone?: string | null
+  ): Promise<void> => {
+    try {
+      const { error } = await (supabase as any)
+        .from('ag_clientes')
+        .insert({
+          nome_cliente,
+          cpf,
+          endereco,
+          email,
+          telefone
+        })
+
+      if (error) {
+        console.error('Erro ao inserir cliente:', error)
+        throw error
+      }
+
+    } catch (error) {
+      console.error('Erro ao inserir cliente:', error)
+      throw error
+    }
+  }
+
   return {
     buscarPerfis,
     buscarProfissionais,
     buscarEspecialidades,
     buscarClientes,
+    inserirCliente,
     inserirProfissional,
     editarProfissional,
     deletarProfissional,
