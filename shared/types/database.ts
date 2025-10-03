@@ -35,6 +35,17 @@ export interface Perfil {
   nome: string
 }
 
+// Tipos para clientes baseado na tabela ag_clientes
+export interface Cliente {
+  id: number
+  created_at: string
+  cpf: string | null
+  nome_cliente: string | null
+  endereco: string | null
+  email: string | null
+  telefone: string | null
+}
+
 // Tipos para as actions do store
 export interface UserActions {
   fetchProfile(): Promise<void>

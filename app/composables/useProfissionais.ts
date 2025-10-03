@@ -1,4 +1,4 @@
-import type { Especialidade, Profissional, Perfil } from '../../shared/types/database'
+import type { Especialidade, Profissional, Perfil, Cliente } from '../../shared/types/database'
 
 // Tipo para o retorno da função de inserir
 interface ApiResponse {
@@ -196,10 +196,32 @@ export const useProfissionais = () => {
     }
   }
 
+  // Buscar clientes
+  const buscarClientes = async (): Promise<Cliente[]> => {
+    try {
+      const { data, error } = await supabase
+        .from('ag_clientes')
+        .select('*')
+        .order('nome_cliente')
+
+      if (error) {
+        console.error('Erro ao buscar clientes:', error)
+        throw error
+      }
+
+      return data || []
+
+    } catch (error) {
+      console.error('Erro ao buscar clientes:', error)
+      throw error
+    }
+  }
+
   return {
     buscarPerfis,
     buscarProfissionais,
     buscarEspecialidades,
+    buscarClientes,
     inserirProfissional,
     editarProfissional,
     deletarProfissional,
