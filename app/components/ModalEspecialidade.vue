@@ -3,6 +3,7 @@
     v-model="modalVisible"
     :title="isEdicao ? 'Editar Especialidade' : 'Nova Especialidade'"
     :confirm-text="isEdicao ? 'Atualizar' : 'Criar'"
+    :confirm-variant="isEdicao ? 'success' : 'primary'"
     cancel-text="Cancelar"
     :loading="loading"
     :disabled="!isFormValid"

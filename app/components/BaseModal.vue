@@ -46,7 +46,7 @@
               {{ cancelText }}
             </BaseButton>
             <BaseButton
-              variant="primary"
+              :variant="confirmVariant"
               size="sm"
               :loading="loading"
               :disabled="disabled"
@@ -69,6 +69,7 @@ interface Props {
   title: string
   confirmText?: string
   cancelText?: string
+  confirmVariant?: 'primary' | 'secondary' | 'error' | 'success' | 'warning' | 'ghost' | 'outline'
   loading?: boolean
   disabled?: boolean
   closeOnOverlay?: boolean
@@ -77,6 +78,7 @@ interface Props {
 const props = withDefaults(defineProps<Props>(), {
   confirmText: 'Confirmar',
   cancelText: 'Cancelar',
+  confirmVariant: 'primary',
   loading: false,
   disabled: false,
   closeOnOverlay: true

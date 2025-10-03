@@ -61,8 +61,9 @@
 import { PlusIcon } from '@heroicons/vue/24/outline'
 import type { Profissional, Perfil, Especialidade } from '../../shared/types/database'
 
-const { buscarProfissionais, buscarPerfis, buscarEspecialidades } = useProfissionais()
+const { buscarProfissionais, buscarPerfis, buscarEspecialidades, deletarProfissional } = useProfissionais()
 const userStore = useUserStore()
+const toast = useNotification()
 
 // Estados reativos
 const profissionais = ref<Profissional[]>([])
@@ -108,15 +109,14 @@ const executarDelecao = async () => {
   if (!profissionalParaDeletar.value) return
   
   try {
-    // TODO: Implementar deletarProfissional quando necessário
-    // await deletarProfissional(profissionalParaDeletar.value)
+    await deletarProfissional(profissionalParaDeletar.value)
+    toast.showSuccess('Profissional deletado com sucesso!')
     await carregarProfissionais()
     modalConfirmacao.value = false
     profissionalParaDeletar.value = null
-    console.log('Deletar profissional:', profissionalParaDeletar.value)
   } catch (error) {
     console.error('Erro ao deletar profissional:', error)
-    // TODO: Mostrar notificação de erro
+    toast.showError('Erro ao deletar profissional. Tente novamente.')
   }
 }
 

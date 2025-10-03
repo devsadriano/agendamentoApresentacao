@@ -75,12 +75,12 @@ export const useProfissionais = () => {
   // Inserir profissional
   const inserirProfissional = async (profile_id: number, especialidade_id: number): Promise<void> => {
     try {
-      const { error } = await supabase
+      const { error } = await (supabase as any)
         .from('ag_profissionais')
         .insert({
           profile_id,
           especialidade_id
-        } as any)
+        })
 
       if (error) {
         console.error('Erro ao inserir profissional:', error)
@@ -89,6 +89,47 @@ export const useProfissionais = () => {
 
     } catch (error) {
       console.error('Erro ao inserir profissional:', error)
+      throw error
+    }
+  }
+
+  // Editar profissional
+  const editarProfissional = async (profissional_id: number, profile_id: number, especialidade_id: number): Promise<void> => {
+    try {
+      const { error } = await (supabase as any)
+        .from('ag_profissionais')
+        .update({
+          profile_id,
+          especialidade_id
+        })
+        .eq('id', profissional_id)
+
+      if (error) {
+        console.error('Erro ao editar profissional:', error)
+        throw error
+      }
+
+    } catch (error) {
+      console.error('Erro ao editar profissional:', error)
+      throw error
+    }
+  }
+
+  // Deletar profissional
+  const deletarProfissional = async (profissional_id: number): Promise<void> => {
+    try {
+      const { error } = await supabase
+        .from('ag_profissionais')
+        .delete()
+        .eq('id', profissional_id)
+
+      if (error) {
+        console.error('Erro ao deletar profissional:', error)
+        throw error
+      }
+
+    } catch (error) {
+      console.error('Erro ao deletar profissional:', error)
       throw error
     }
   }
@@ -160,6 +201,8 @@ export const useProfissionais = () => {
     buscarProfissionais,
     buscarEspecialidades,
     inserirProfissional,
+    editarProfissional,
+    deletarProfissional,
     inserirEspecialidade,
     editarEspecialidade,
     deletarEspecialidade

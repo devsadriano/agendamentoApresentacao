@@ -4,6 +4,7 @@
     title="Confirmar Exclusão"
     confirm-text="Deletar"
     cancel-text="Cancelar"
+    confirm-variant="error"
     :loading="loading"
     @confirm="handleConfirm"
     @close="handleClose"

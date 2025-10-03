@@ -3,6 +3,7 @@
     v-model="modalVisible"
     :title="isEdicao ? 'Editar Profissional' : 'Novo Profissional'"
     :confirm-text="isEdicao ? 'Atualizar' : 'Criar'"
+    :confirm-variant="isEdicao ? 'success' : 'primary'"
     cancel-text="Cancelar"
     :loading="loading"
     :disabled="!isFormValid"
@@ -98,7 +99,7 @@ const emit = defineEmits<{
 }>()
 
 // Composables
-const { inserirProfissional } = useProfissionais()
+const { inserirProfissional, editarProfissional } = useProfissionais()
 const toast = useNotification()
 
 // Estados reativos
@@ -166,12 +167,17 @@ const handleConfirm = async () => {
   
   try {
     if (props.isEdicao) {
-      // TODO: Implementar lógica de editar
-      console.log('Editar profissional - TODO:', {
-        profile_id: Number(form.value.profile_id),
-        especialidade_id: Number(form.value.especialidade_id)
-      })
-      toast.showInfo('Funcionalidade de edição em desenvolvimento')
+      // Editar profissional existente
+      if (!props.profissional) {
+        throw new Error('Dados do profissional não encontrados')
+      }
+      
+      await editarProfissional(
+        props.profissional.profissional_id,
+        Number(form.value.profile_id),
+        Number(form.value.especialidade_id)
+      )
+      toast.showSuccess('Profissional atualizado com sucesso!')
     } else {
       // Inserir novo profissional
       await inserirProfissional(

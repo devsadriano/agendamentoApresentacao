@@ -1002,3 +1002,28 @@ as outras infos sao automaticas ...
 Crie essa função e depois implemente a funcao no modal   na parte de criar.
 
 Ao executar exiba o toast que temos no projeto e atualize a tabela.
+
+
+
+
+
+---------------------------------------------
+otimo , agora apreciso que crie a funcao de editar ...
+
+crie a funcao no composable, nesse caso iremos usar como parametro o id do profissional, nao confunda id profissional com id perfil ... ok?
+
+e tbm já aproveite crie a funcção de deletar...
+
+vamos implementar primeiro a funcao de editar no modal...
+
+ao clicar em atualizar ele já edita e da feedback, nao precisa de confirmação...
+
+
+faco isso e me avise e depois prosseguimos...
+
+
+
+
+
+-----------------------------------------
+perfeito, agora ao clicar na lixeira na # quero que delete o registro, mas antes aparecer o modal de alerta... ja criamos ele # 
