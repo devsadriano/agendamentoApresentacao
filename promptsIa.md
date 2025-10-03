@@ -949,3 +949,17 @@ o retorno da função e esse
 entao crie o tipo de dados para usar isso 
 
 Não implemente nenhum lugar ainda apneas crie e avise quando criar
+
+
+
+
+
+--------------------------------------------
+Entao seguindo a mesma logiga ModalEsp, quero que crie modal profissionais...
+
+Mas atencao, o modal profissional vai exibir dois dropdow uma para o nome do user (perfil) e outro para especialidade, e vamos escolher na lista para add.
+
+mas essa info precisa estar ja disponivel quando o modal abrir...
+entao pensei em fazer esse gerenciamento do estado da pagina... profissional, ou seja ao montar a pagina busca essa duas infos no banco usando as funcoes do composable... e ao clicar no botao para abrir o modal,m ai ja abre com as infos ali... 
+
+entao faca essa parte inicialmente, depois digo como iremos salvar isso no banco...

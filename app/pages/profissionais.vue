@@ -35,18 +35,39 @@
         @deletar="confirmarDeletar"
       />
     </div>
+
+    <!-- Modal de Edição/Criação -->
+    <ModalProfissional
+      v-model="modalAberto"
+      :is-edicao="modalEdicao"
+      :profissional="profissionalEdicao"
+      :perfis="perfis"
+      :especialidades="especialidades"
+      :is-admin="isAdmin"
+      @success="onModalSuccess"
+    />
+
+    <!-- Modal de Confirmação -->
+    <ModalConfirmacao
+      v-model="modalConfirmacao"
+      message="Tem certeza que deseja deletar este profissional?"
+      @confirm="executarDelecao"
+      @close="modalConfirmacao = false"
+    />
   </NuxtLayout>
 </template>
 
 <script setup lang="ts">
 import { PlusIcon } from '@heroicons/vue/24/outline'
-import type { Profissional } from '../../shared/types/database'
+import type { Profissional, Perfil, Especialidade } from '../../shared/types/database'
 
-const { buscarProfissionais } = useProfissionais()
+const { buscarProfissionais, buscarPerfis, buscarEspecialidades } = useProfissionais()
 const userStore = useUserStore()
 
 // Estados reativos
 const profissionais = ref<Profissional[]>([])
+const perfis = ref<Perfil[]>([])
+const especialidades = ref<Especialidade[]>([])
 const loading = ref(false)
 const error = ref<string | null>(null)
 const modalAberto = ref(false)
@@ -101,7 +122,7 @@ const executarDelecao = async () => {
 
 // Método chamado quando o modal tem sucesso
 const onModalSuccess = async () => {
-  // Recarregar a lista de profissionais
+  // Recarregar apenas a lista de profissionais
   await carregarProfissionais()
 }
 
@@ -120,8 +141,35 @@ const carregarProfissionais = async () => {
   }
 }
 
-// Carregar profissionais ao montar a página
+// Função para carregar perfis
+const carregarPerfis = async () => {
+  try {
+    perfis.value = await buscarPerfis()
+  } catch (err) {
+    console.error('Erro ao carregar perfis:', err)
+  }
+}
+
+// Função para carregar especialidades
+const carregarEspecialidades = async () => {
+  try {
+    especialidades.value = await buscarEspecialidades()
+  } catch (err) {
+    console.error('Erro ao carregar especialidades:', err)
+  }
+}
+
+// Função para carregar todos os dados necessários
+const carregarDados = async () => {
+  await Promise.all([
+    carregarProfissionais(),
+    carregarPerfis(),
+    carregarEspecialidades()
+  ])
+}
+
+// Carregar dados ao montar a página
 onMounted(async () => {
-  await carregarProfissionais()
+  await carregarDados()
 })
 </script>
