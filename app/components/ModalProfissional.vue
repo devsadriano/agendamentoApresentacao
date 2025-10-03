@@ -97,6 +97,10 @@ const emit = defineEmits<{
   success: []
 }>()
 
+// Composables
+const { inserirProfissional } = useProfissionais()
+const toast = useNotification()
+
 // Estados reativos
 const loading = ref(false)
 const form = ref({
@@ -161,21 +165,27 @@ const handleConfirm = async () => {
   loading.value = true
   
   try {
-    // TODO: Implementar lógica de salvar (inserir/editar)
-    console.log('Dados do formulário:', {
-      profile_id: Number(form.value.profile_id),
-      especialidade_id: Number(form.value.especialidade_id),
-      isEdicao: props.isEdicao
-    })
-    
-    // Simular sucesso por enquanto
-    await new Promise(resolve => setTimeout(resolve, 1000))
+    if (props.isEdicao) {
+      // TODO: Implementar lógica de editar
+      console.log('Editar profissional - TODO:', {
+        profile_id: Number(form.value.profile_id),
+        especialidade_id: Number(form.value.especialidade_id)
+      })
+      toast.showInfo('Funcionalidade de edição em desenvolvimento')
+    } else {
+      // Inserir novo profissional
+      await inserirProfissional(
+        Number(form.value.profile_id),
+        Number(form.value.especialidade_id)
+      )
+      toast.showSuccess('Profissional adicionado com sucesso!')
+    }
     
     emit('success')
     handleClose()
   } catch (error) {
     console.error('Erro ao salvar profissional:', error)
-    errors.value.profile_id = 'Erro ao salvar profissional. Tente novamente.'
+    toast.showError('Erro ao salvar profissional. Tente novamente.')
   } finally {
     loading.value = false
   }
@@ -192,10 +202,9 @@ const loadProfissional = () => {
     return
   }
   
-  // TODO: Mapear os dados do profissional para o formulário
-  // Nota: Como o Profissional atual só tem os nomes, precisaríamos
-  // dos IDs para preencher o formulário corretamente
-  console.log('Carregando profissional para edição:', props.profissional)
+  // Preencher formulário com os IDs do profissional
+  form.value.profile_id = props.profissional.profile_id.toString()
+  form.value.especialidade_id = props.profissional.especialidade_id.toString()
 }
 
 // Watchers

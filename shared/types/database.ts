@@ -23,6 +23,8 @@ export interface Especialidade {
 // Tipos para profissionais baseado no retorno da RPC ag_get_profissionais
 export interface Profissional {
   profissional_id: number
+  profile_id: number
+  especialidade_id: number
   nome_profissional: string
   especialidade_profissional: string
 }

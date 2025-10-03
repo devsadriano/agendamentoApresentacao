@@ -72,6 +72,27 @@ export const useProfissionais = () => {
     }
   }
 
+  // Inserir profissional
+  const inserirProfissional = async (profile_id: number, especialidade_id: number): Promise<void> => {
+    try {
+      const { error } = await supabase
+        .from('ag_profissionais')
+        .insert({
+          profile_id,
+          especialidade_id
+        } as any)
+
+      if (error) {
+        console.error('Erro ao inserir profissional:', error)
+        throw error
+      }
+
+    } catch (error) {
+      console.error('Erro ao inserir profissional:', error)
+      throw error
+    }
+  }
+
   // Inserir especialidade
   const inserirEspecialidade = async (nome: string): Promise<ApiResponse> => {
     try {
@@ -138,6 +159,7 @@ export const useProfissionais = () => {
     buscarPerfis,
     buscarProfissionais,
     buscarEspecialidades,
+    inserirProfissional,
     inserirEspecialidade,
     editarEspecialidade,
     deletarEspecialidade
