@@ -30,7 +30,9 @@
     </svg>
 
     <!-- Icon slot (antes do texto) -->
-    <slot name="icon-left" />
+    <span v-if="$slots['icon-left']" class="mr-2">
+      <slot name="icon-left" />
+    </span>
 
     <!-- Conteúdo do botão -->
     <span v-if="$slots.default || text">
@@ -38,7 +40,9 @@
     </span>
 
     <!-- Icon slot (depois do texto) -->
-    <slot name="icon-right" />
+    <span v-if="$slots['icon-right']" class="ml-2">
+      <slot name="icon-right" />
+    </span>
   </button>
 </template>
 

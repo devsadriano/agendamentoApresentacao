@@ -71,7 +71,7 @@
                 title="Editar cliente"
                 @click="handleEditar(cliente.id)"
               >
-                <PencilIcon class="h-4 w-4" />
+                <PencilIcon class="h-5 w-5" />
               </button>
               
               <!-- Botão Deletar -->
@@ -81,7 +81,7 @@
                 title="Deletar cliente"
                 @click="handleDeletar(cliente.id)"
               >
-                <TrashIcon class="h-4 w-4" />
+                <TrashIcon class="h-5 w-5" />
               </button>
             </div>
           </td>

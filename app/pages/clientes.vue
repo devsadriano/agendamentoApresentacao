@@ -33,6 +33,14 @@
         @deletar="confirmarDeletar"
       />
     </div>
+
+    <!-- Modal de Edição/Criação -->
+    <ModalCliente
+      v-model="modalAberto"
+      :is-edicao="modalEdicao"
+      :cliente="clienteEdicao"
+      @success="onModalSuccess"
+    />
   </NuxtLayout>
 </template>
 
@@ -46,23 +54,38 @@ const { buscarClientes } = useProfissionais()
 const clientes = ref<Cliente[]>([])
 const loading = ref(false)
 const error = ref<string | null>(null)
+const modalAberto = ref(false)
+const modalEdicao = ref(false)
+const clienteEdicao = ref<Cliente | null>(null)
 
 // Método para abrir o modal de criação
 const abrirModal = () => {
-  // TODO: Implementar abertura do modal
-  console.log('Abrir modal de criação')
+  modalEdicao.value = false
+  clienteEdicao.value = null
+  modalAberto.value = true
 }
 
 // Método para abrir o modal de edição
 const abrirModalEdicao = (id: number) => {
-  // TODO: Implementar abertura do modal de edição
-  console.log('Abrir modal de edição para cliente:', id)
+  // Buscar o cliente nos dados já carregados
+  const cliente = clientes.value.find(c => c.id === id)
+  if (cliente) {
+    modalEdicao.value = true
+    clienteEdicao.value = cliente
+    modalAberto.value = true
+  }
 }
 
 // Método para abrir confirmação de deletar
 const confirmarDeletar = (id: number) => {
   // TODO: Implementar confirmação de deletar
   console.log('Confirmar deletar cliente:', id)
+}
+
+// Método chamado quando o modal tem sucesso
+const onModalSuccess = async () => {
+  // Recarregar a lista de clientes
+  await carregarClientes()
 }
 
 // Função para carregar clientes

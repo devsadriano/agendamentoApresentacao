@@ -1089,3 +1089,22 @@ essa funcao os campos cpf e nome sao obrigatorios, o restante e opcional..
 
 
 ja os campos id e creat at vc sabe q sao automaitcos e n precisamos nos preocupar
+
+
+
+
+
+-------------------------------------------
+Otimo...
+
+Agora seguindo a mesma logica do modal de #file:ModalEspecialidade.vue  , onde tem a versao de edicao e novo registro...
+
+crie o modal de clientes, que tbm vai inserir/editar cliente...
+
+use o #file:BaseModal.vue  como base para esse modal.
+
+Apos criar o modal, entao na #file:clientes.vue  coloque o modal, que sera o irmao do #file:TabelaClientes.vue e ao clicar no botao de adicionar ele vai abrir
+
+
+
+--------------------------------------

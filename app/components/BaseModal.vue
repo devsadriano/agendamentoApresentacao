@@ -40,14 +40,14 @@
           <div class="flex justify-end space-x-3">
             <BaseButton
               variant="secondary"
-              size="sm"
+              size="md"
               @click="close"
             >
               {{ cancelText }}
             </BaseButton>
             <BaseButton
               :variant="confirmVariant"
-              size="sm"
+              size="md"
               :loading="loading"
               :disabled="disabled"
               @click="confirm"

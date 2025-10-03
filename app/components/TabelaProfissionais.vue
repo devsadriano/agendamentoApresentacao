@@ -59,7 +59,7 @@
                 title="Editar profissional"
                 @click="handleEditar(profissional.profissional_id)"
               >
-                <PencilIcon class="h-4 w-4" />
+                <PencilIcon class="h-5 w-5" />
               </button>
               
               <!-- Botão Deletar -->
@@ -75,7 +75,7 @@
                 title="Deletar profissional"
                 @click="handleDeletar(profissional.profissional_id)"
               >
-                <TrashIcon class="h-4 w-4" />
+                <TrashIcon class="h-5 w-5" />
               </button>
             </div>
           </td>
