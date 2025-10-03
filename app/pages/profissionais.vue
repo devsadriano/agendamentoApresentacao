@@ -1,7 +1,127 @@
 <template>
   <NuxtLayout>
-    <div class="p-6">
+    <!-- Header com título -->
+    <div class="px-6 py-4">
       <h1 class="text-2xl font-bold text-gray-800">Profissionais</h1>
+    </div>
+    
+    <!-- Área de conteúdo -->
+    <div class="p-6">
+      <!-- Header com botão adicionar -->
+      <div class="mb-6 flex justify-between items-center">
+        <div>
+          <p class="text-gray-600">Gerencie os profissionais do sistema</p>
+        </div>
+        <BaseButton
+          variant="primary"
+          size="md"
+          :disabled="!isAdmin"
+          @click="abrirModal"
+        >
+          <template #icon-left>
+            <PlusIcon class="h-4 w-4" />
+          </template>
+          Adicionar Profissional
+        </BaseButton>
+      </div>
+
+      <!-- Tabela -->
+      <TabelaProfissionais 
+        :profissionais="profissionais"
+        :loading="loading"
+        :error="error"
+        :is-admin="isAdmin"
+        @editar="abrirModalEdicao"
+        @deletar="confirmarDeletar"
+      />
     </div>
   </NuxtLayout>
 </template>
+
+<script setup lang="ts">
+import { PlusIcon } from '@heroicons/vue/24/outline'
+import type { Profissional } from '../../shared/types/database'
+
+const { buscarProfissionais } = useProfissionais()
+const userStore = useUserStore()
+
+// Estados reativos
+const profissionais = ref<Profissional[]>([])
+const loading = ref(false)
+const error = ref<string | null>(null)
+const modalAberto = ref(false)
+const modalEdicao = ref(false)
+const profissionalEdicao = ref<Profissional | null>(null)
+const modalConfirmacao = ref(false)
+const profissionalParaDeletar = ref<number | null>(null)
+
+// Computed para verificar se é admin
+const isAdmin = computed(() => userStore.profile?.role === 'admin')
+
+// Método para abrir o modal de criação
+const abrirModal = () => {
+  modalEdicao.value = false
+  profissionalEdicao.value = null
+  modalAberto.value = true
+}
+
+// Método para abrir o modal de edição
+const abrirModalEdicao = (id: number) => {
+  // Buscar o profissional nos dados já carregados
+  const profissional = profissionais.value.find(p => p.profissional_id === id)
+  if (profissional) {
+    modalEdicao.value = true
+    profissionalEdicao.value = profissional
+    modalAberto.value = true
+  }
+}
+
+// Método para abrir confirmação de deletar
+const confirmarDeletar = (id: number) => {
+  profissionalParaDeletar.value = id
+  modalConfirmacao.value = true
+}
+
+// Método para executar a exclusão
+const executarDelecao = async () => {
+  if (!profissionalParaDeletar.value) return
+  
+  try {
+    // TODO: Implementar deletarProfissional quando necessário
+    // await deletarProfissional(profissionalParaDeletar.value)
+    await carregarProfissionais()
+    modalConfirmacao.value = false
+    profissionalParaDeletar.value = null
+    console.log('Deletar profissional:', profissionalParaDeletar.value)
+  } catch (error) {
+    console.error('Erro ao deletar profissional:', error)
+    // TODO: Mostrar notificação de erro
+  }
+}
+
+// Método chamado quando o modal tem sucesso
+const onModalSuccess = async () => {
+  // Recarregar a lista de profissionais
+  await carregarProfissionais()
+}
+
+// Função para carregar profissionais
+const carregarProfissionais = async () => {
+  loading.value = true
+  error.value = null
+  
+  try {
+    profissionais.value = await buscarProfissionais()
+  } catch (err) {
+    error.value = err instanceof Error ? err.message : 'Erro desconhecido'
+    console.error('Erro ao carregar profissionais:', err)
+  } finally {
+    loading.value = false
+  }
+}
+
+// Carregar profissionais ao montar a página
+onMounted(async () => {
+  await carregarProfissionais()
+})
+</script>

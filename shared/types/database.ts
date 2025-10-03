@@ -20,6 +20,19 @@ export interface Especialidade {
   nome: string
 }
 
+// Tipos para profissionais baseado no retorno da RPC ag_get_profissionais
+export interface Profissional {
+  profissional_id: number
+  nome_profissional: string
+  especialidade_profissional: string
+}
+
+// Tipos para perfis baseado no retorno da RPC ag_get_profiles_if_admin
+export interface Perfil {
+  id: number
+  nome: string
+}
+
 // Tipos para as actions do store
 export interface UserActions {
   fetchProfile(): Promise<void>
