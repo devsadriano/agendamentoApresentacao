@@ -6,20 +6,16 @@
     </div>
     
     <!-- Área de conteúdo -->
-    <div class="p-6">
-      <div class="mb-6">
-        <p class="text-gray-600">Gerencie os agendamentos do sistema</p>
-      </div>
-
+    <div class="p-6 flex flex-col h-full min-h-[calc(100vh-80px)]">
       <!-- Componente principal de gerenciamento -->
-      <AgendamentoManager />
+      <AgendamentoManager class="flex-1 h-full" />
     </div>
   </NuxtLayout>
 </template>
 
 <script setup lang="ts">
 // Import explícito do componente
-import AgendamentoManager from '../components/AgendamentoManager.vue'
+import AgendamentoManager from '../components/agendamentos/AgendamentoManager.vue'
 
 // Configuração da página
 useHead({
