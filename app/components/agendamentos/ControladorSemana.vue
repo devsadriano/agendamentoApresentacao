@@ -1,35 +1,56 @@
 <template>
-  <div class="flex flex-col items-center space-y-2">
-    <!-- Primeira linha: Período da semana -->
-    <div class="text-sm font-medium text-gray-700">
-      De {{ formatarData(primeiroDia) }} até {{ formatarData(ultimoDia) }}
-    </div>
-    
-    <!-- Segunda linha: Botões de navegação -->
-    <div class="flex items-center space-x-4">
-      <!-- Botão voltar semana -->
-      <button 
-        @click="voltarSemana"
-        class="p-2 rounded-lg border border-gray-300 hover:bg-gray-50 transition-colors"
-        title="Semana anterior"
-      >
-        <ChevronLeftIcon class="h-5 w-5 text-gray-600" />
-      </button>
+  <div class="bg-white rounded-lg shadow-sm border-b border-gray-200 p-4 flex items-center justify-between w-full">
+    <!-- Lado esquerdo: Data e botões de navegação -->
+    <div class="flex items-center space-x-4 flex-shrink-0">
+      <!-- Período da semana -->
+      <div class="text-sm font-medium text-gray-700">
+        {{ formatarData(primeiroDia) }} - {{ formatarData(ultimoDia) }}
+      </div>
       
-      <!-- Botão avançar semana -->
-      <button 
-        @click="avancarSemana"
-        class="p-2 rounded-lg border border-gray-300 hover:bg-gray-50 transition-colors"
-        title="Próxima semana"
+      <!-- Botões de navegação -->
+      <div class="flex items-center space-x-2">
+        <!-- Botão voltar semana -->
+        <button 
+          @click="voltarSemana"
+          class="p-2 rounded-lg border border-gray-300 hover:bg-gray-50 transition-colors"
+          title="Semana anterior"
+        >
+          <ChevronLeftIcon class="h-5 w-5 text-gray-600" />
+        </button>
+        
+        <!-- Botão avançar semana -->
+        <button 
+          @click="avancarSemana"
+          class="p-2 rounded-lg border border-gray-300 hover:bg-gray-50 transition-colors"
+          title="Próxima semana"
+        >
+          <ChevronRightIcon class="h-5 w-5 text-gray-600" />
+        </button>
+      </div>
+    </div>
+
+    <!-- Centro: Profissional Ativo -->
+    <div class="flex-1 flex justify-center">
+      <ProfissionalAtivo />
+    </div>
+
+    <!-- Lado direito: Botão Novo -->
+    <div class="flex-shrink-0">
+      <BaseButton
+        variant="primary"
+        size="md"
+        @click="novoAgendamento"
       >
-        <ChevronRightIcon class="h-5 w-5 text-gray-600" />
-      </button>
+        Novo
+      </BaseButton>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
 import { ChevronLeftIcon, ChevronRightIcon } from '@heroicons/vue/24/outline'
+import BaseButton from '../BaseButton.vue'
+import ProfissionalAtivo from './ProfissionalAtivo.vue'
 
 // Acessar o store de agendamentos
 const agendamentoStore = useAgendamentoStore()
@@ -60,5 +81,11 @@ const voltarSemana = () => {
 
 const avancarSemana = () => {
   agendamentoStore.avancarSemana()
+}
+
+// Função para novo agendamento
+const novoAgendamento = () => {
+  // TODO: Implementar modal ou navegação para criar novo agendamento
+  console.log('Criar novo agendamento')
 }
 </script>
