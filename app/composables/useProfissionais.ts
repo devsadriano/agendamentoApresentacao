@@ -247,12 +247,45 @@ export const useProfissionais = () => {
     }
   }
 
+  // Editar cliente
+  const editarCliente = async (
+    id: number,
+    nome_cliente: string, 
+    cpf: string, 
+    endereco?: string | null, 
+    email?: string | null, 
+    telefone?: string | null
+  ): Promise<void> => {
+    try {
+      const { error } = await (supabase as any)
+        .from('ag_clientes')
+        .update({
+          nome_cliente,
+          cpf,
+          endereco,
+          email,
+          telefone
+        })
+        .eq('id', id)
+
+      if (error) {
+        console.error('Erro ao editar cliente:', error)
+        throw error
+      }
+
+    } catch (error) {
+      console.error('Erro ao editar cliente:', error)
+      throw error
+    }
+  }
+
   return {
     buscarPerfis,
     buscarProfissionais,
     buscarEspecialidades,
     buscarClientes,
     inserirCliente,
+    editarCliente,
     inserirProfissional,
     editarProfissional,
     deletarProfissional,

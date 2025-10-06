@@ -89,7 +89,7 @@ const emit = defineEmits<{
 }>()
 
 // Composable para ações de clientes
-const { inserirCliente } = useProfissionais()
+const { inserirCliente, editarCliente } = useProfissionais()
 const { showSuccess, showError } = useNotification()
 
 // Estados reativos
@@ -267,14 +267,23 @@ const handleConfirm = async () => {
   loading.value = true
   
   try {
+    // Preparar dados limpos (sem formatação)
+    const cpfLimpo = form.value.cpf.replace(/\D/g, '')
+    const telefoneLimpo = form.value.telefone.replace(/\D/g, '') || null
+    
     if (props.isEdicao && props.cliente) {
-      // TODO: Implementar função de editar cliente
-      console.log('Editar cliente ainda não implementado')
-    } else {
-      // Preparar dados limpos (sem formatação)
-      const cpfLimpo = form.value.cpf.replace(/\D/g, '')
-      const telefoneLimpo = form.value.telefone.replace(/\D/g, '') || null
+      // Editar cliente existente
+      await editarCliente(
+        props.cliente.id,
+        form.value.nome_cliente.trim(),
+        cpfLimpo,
+        form.value.endereco.trim() || null,
+        form.value.email.trim() || null,
+        telefoneLimpo
+      )
       
+      showSuccess('Cliente atualizado com sucesso!')
+    } else {
       // Inserir novo cliente
       await inserirCliente(
         form.value.nome_cliente.trim(),
@@ -285,9 +294,10 @@ const handleConfirm = async () => {
       )
       
       showSuccess('Cliente criado com sucesso!')
-      emit('success')
-      handleClose()
     }
+    
+    emit('success')
+    handleClose()
   } catch (error) {
     console.error('Erro ao salvar cliente:', error)
     showError('Erro ao salvar cliente. Tente novamente.')
