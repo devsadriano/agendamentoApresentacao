@@ -1,8 +1,8 @@
 <template>
   <div class="rounded-lg h-full flex flex-col">
-    <!-- Header - Agendamentos (altura fixa 100px) -->
-    <div class="h-[100px] flex items-center px-6">
-      <!-- Card único com data, setas e botão Novo -->
+    <!-- Header - Agendamentos (altura automática) -->
+    <div class="flex items-center px-6 py-4">
+      <!-- Card único com todos os componentes -->
       <ControladorSemana />
     </div>
 
