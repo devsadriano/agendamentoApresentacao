@@ -41,6 +41,14 @@
       :cliente="clienteEdicao"
       @success="onModalSuccess"
     />
+
+    <!-- Modal de Confirmação para Deletar -->
+    <ModalConfirmacao
+      v-model="modalConfirmacao"
+      :message="mensagemConfirmacao"
+      @confirm="confirmarDeletarCliente"
+      @close="cancelarDeletar"
+    />
   </NuxtLayout>
 </template>
 
@@ -48,7 +56,8 @@
 import { PlusIcon } from '@heroicons/vue/24/outline'
 import type { Cliente } from '../../shared/types/database'
 
-const { buscarClientes } = useProfissionais()
+const { buscarClientes, deletarCliente } = useProfissionais()
+const { showSuccess, showError } = useNotification()
 
 // Estados reativos
 const clientes = ref<Cliente[]>([])
@@ -57,6 +66,9 @@ const error = ref<string | null>(null)
 const modalAberto = ref(false)
 const modalEdicao = ref(false)
 const clienteEdicao = ref<Cliente | null>(null)
+const modalConfirmacao = ref(false)
+const clienteParaDeletar = ref<number | null>(null)
+const mensagemConfirmacao = ref('')
 
 // Método para abrir o modal de criação
 const abrirModal = () => {
@@ -78,8 +90,41 @@ const abrirModalEdicao = (id: number) => {
 
 // Método para abrir confirmação de deletar
 const confirmarDeletar = (id: number) => {
-  // TODO: Implementar confirmação de deletar
-  console.log('Confirmar deletar cliente:', id)
+  // Buscar o cliente nos dados já carregados para mostrar o nome
+  const cliente = clientes.value.find(c => c.id === id)
+  const nomeCliente = cliente?.nome_cliente || 'este cliente'
+  
+  clienteParaDeletar.value = id
+  mensagemConfirmacao.value = `Tem certeza que deseja deletar o cliente "${nomeCliente}"?`
+  modalConfirmacao.value = true
+}
+
+// Método para confirmar a deleção
+const confirmarDeletarCliente = async () => {
+  if (!clienteParaDeletar.value) return
+  
+  try {
+    await deletarCliente(clienteParaDeletar.value)
+    showSuccess('Cliente deletado com sucesso!')
+    
+    // Recarregar a lista de clientes
+    await carregarClientes()
+    
+    // Fechar modal e limpar
+    modalConfirmacao.value = false
+    clienteParaDeletar.value = null
+    
+  } catch (error) {
+    console.error('Erro ao deletar cliente:', error)
+    showError('Erro ao deletar cliente. Tente novamente.')
+  }
+}
+
+// Método para cancelar a deleção
+const cancelarDeletar = () => {
+  modalConfirmacao.value = false
+  clienteParaDeletar.value = null
+  mensagemConfirmacao.value = ''
 }
 
 // Método chamado quando o modal tem sucesso

@@ -279,6 +279,25 @@ export const useProfissionais = () => {
     }
   }
 
+  // Deletar cliente
+  const deletarCliente = async (id: number): Promise<void> => {
+    try {
+      const { error } = await supabase
+        .from('ag_clientes')
+        .delete()
+        .eq('id', id)
+
+      if (error) {
+        console.error('Erro ao deletar cliente:', error)
+        throw error
+      }
+
+    } catch (error) {
+      console.error('Erro ao deletar cliente:', error)
+      throw error
+    }
+  }
+
   return {
     buscarPerfis,
     buscarProfissionais,
@@ -286,6 +305,7 @@ export const useProfissionais = () => {
     buscarClientes,
     inserirCliente,
     editarCliente,
+    deletarCliente,
     inserirProfissional,
     editarProfissional,
     deletarProfissional,
