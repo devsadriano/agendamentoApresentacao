@@ -17,6 +17,9 @@
 // Import explícito do componente
 import AgendamentoManager from '../components/agendamentos/AgendamentoManager.vue'
 
+// Inicializar o store de agendamentos
+const agendamentoStore = useAgendamentoStore()
+
 // Configuração da página
 useHead({
   title: 'Agendamentos - Sistema de Agendamento',

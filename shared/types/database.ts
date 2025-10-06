@@ -52,3 +52,18 @@ export interface UserActions {
   updateProfile(data: Partial<UserProfile>): Promise<void>
   clearProfile(): void
 }
+
+// Tipos para dia da semana no contexto de agendamentos
+export interface DiaSemana {
+  data: Date
+  diaSemana: string
+  diaNumero: number
+  mesAno: string
+}
+
+// Estado do store de agendamentos
+export interface AgendamentoState {
+  dataReferencia: Date
+  loading: boolean
+  error: string | null
+}
