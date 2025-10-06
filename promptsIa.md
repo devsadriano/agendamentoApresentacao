@@ -1108,3 +1108,11 @@ Apos criar o modal, entao na #file:clientes.vue  coloque o modal, que sera o irm
 
 
 --------------------------------------
+Agora eu quero que esse modal possua validacoes
+
+cpf 
+
+no caso do email, se preenchido, verificar se é email valido com o @ se nao preenchido ok 
+
+E no caso do telefone colocar mascara (ddd)numero ex: (11)99999-8888
+

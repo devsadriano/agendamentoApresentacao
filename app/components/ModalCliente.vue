@@ -19,6 +19,7 @@
           placeholder="Digite o nome do cliente"
           required
           :error="errors.nome_cliente"
+          @blur="validateNome"
         />
       </div>
 
@@ -26,9 +27,11 @@
         <BaseInput
           v-model="form.cpf"
           label="CPF"
-          placeholder="Digite o CPF"
+          placeholder="000.000.000-00"
           required
           :error="errors.cpf"
+          :maxlength="14"
+          @blur="validateCpf"
         />
       </div>
 
@@ -39,6 +42,7 @@
           type="email"
           placeholder="Digite o email"
           :error="errors.email"
+          @blur="validateEmail"
         />
       </div>
 
@@ -46,8 +50,10 @@
         <BaseInput
           v-model="form.telefone"
           label="Telefone"
-          placeholder="Digite o telefone"
+          placeholder="(00)00000-0000"
           :error="errors.telefone"
+          :maxlength="14"
+          @blur="validateTelefone"
         />
       </div>
 
@@ -110,8 +116,18 @@ const modalVisible = computed({
 })
 
 const isFormValid = computed(() => {
-  return form.value.nome_cliente.trim().length > 0 && 
-         form.value.cpf.trim().length > 0
+  // Campos obrigatórios preenchidos corretamente
+  const nomeValido = form.value.nome_cliente.trim().length >= 3
+  const cpfValido = isValidCpf(form.value.cpf)
+  
+  // Campos opcionais válidos se preenchidos
+  const emailValido = !form.value.email.trim() || isValidEmail(form.value.email.trim())
+  const telefoneValido = !form.value.telefone.trim() || isValidTelefone(form.value.telefone)
+  
+  // Nenhum erro nos campos
+  const semErros = !Object.values(errors.value).some(error => error.trim() !== '')
+  
+  return nomeValido && cpfValido && emailValido && telefoneValido && semErros
 })
 
 // Métodos
@@ -133,43 +149,114 @@ const resetForm = () => {
 }
 
 const validateForm = () => {
-  // Reset errors
-  Object.keys(errors.value).forEach(key => {
-    errors.value[key as keyof typeof errors.value] = ''
-  })
+  // Executar todas as validações
+  validateNome()
+  validateCpf()
+  validateEmail()
+  validateTelefone()
   
-  let isValid = true
-  
-  // Validar nome (obrigatório)
-  if (!form.value.nome_cliente.trim()) {
-    errors.value.nome_cliente = 'Nome do cliente é obrigatório'
-    isValid = false
-  } else if (form.value.nome_cliente.trim().length < 2) {
-    errors.value.nome_cliente = 'Nome deve ter pelo menos 2 caracteres'
-    isValid = false
-  }
-  
-  // Validar CPF (obrigatório)
-  if (!form.value.cpf.trim()) {
-    errors.value.cpf = 'CPF é obrigatório'
-    isValid = false
-  } else if (form.value.cpf.trim().length < 11) {
-    errors.value.cpf = 'CPF deve ter pelo menos 11 caracteres'
-    isValid = false
-  }
-  
-  // Validar email (opcional, mas se preenchido deve ser válido)
-  if (form.value.email.trim() && !isValidEmail(form.value.email.trim())) {
-    errors.value.email = 'Email deve ter um formato válido'
-    isValid = false
-  }
-  
-  return isValid
+  // Retornar se não há erros
+  return !Object.values(errors.value).some(error => error.trim() !== '')
 }
 
 const isValidEmail = (email: string) => {
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
   return emailRegex.test(email)
+}
+
+// Função para validar CPF
+const isValidCpf = (cpf: string) => {
+  const cleanCpf = cpf.replace(/\D/g, '')
+  
+  // Verifica se tem 11 dígitos
+  if (cleanCpf.length !== 11) return false
+  
+  // Verifica se todos os dígitos são iguais
+  if (/^(\d)\1{10}$/.test(cleanCpf)) return false
+  
+  // Validação do algoritmo do CPF
+  let sum = 0
+  for (let i = 0; i < 9; i++) {
+    sum += parseInt(cleanCpf.charAt(i)) * (10 - i)
+  }
+  let remainder = (sum * 10) % 11
+  if (remainder === 10 || remainder === 11) remainder = 0
+  if (remainder !== parseInt(cleanCpf.charAt(9))) return false
+  
+  sum = 0
+  for (let i = 0; i < 10; i++) {
+    sum += parseInt(cleanCpf.charAt(i)) * (11 - i)
+  }
+  remainder = (sum * 10) % 11
+  if (remainder === 10 || remainder === 11) remainder = 0
+  if (remainder !== parseInt(cleanCpf.charAt(10))) return false
+  
+  return true
+}
+
+// Função para validar telefone
+const isValidTelefone = (telefone: string) => {
+  const cleanTelefone = telefone.replace(/\D/g, '')
+  return cleanTelefone.length >= 10 && cleanTelefone.length <= 11
+}
+
+// Validações individuais dos campos
+const validateNome = () => {
+  const nome = form.value.nome_cliente.trim()
+  if (!nome) {
+    errors.value.nome_cliente = 'Nome do cliente é obrigatório'
+  } else if (nome.length < 3) {
+    errors.value.nome_cliente = 'Nome deve ter pelo menos 3 caracteres'
+  } else {
+    errors.value.nome_cliente = ''
+  }
+}
+
+const validateCpf = () => {
+  const cpf = form.value.cpf.trim()
+  if (!cpf) {
+    errors.value.cpf = 'CPF é obrigatório'
+  } else if (!isValidCpf(cpf)) {
+    const cleanCpf = cpf.replace(/\D/g, '')
+    if (cleanCpf.length < 11) {
+      errors.value.cpf = 'CPF deve ter 11 dígitos'
+    } else {
+      errors.value.cpf = 'CPF inválido'
+    }
+  } else {
+    errors.value.cpf = ''
+  }
+}
+
+const validateEmail = () => {
+  const email = form.value.email.trim()
+  if (!email) {
+    errors.value.email = ''
+    return
+  }
+  
+  if (!isValidEmail(email)) {
+    errors.value.email = 'Email deve ter um formato válido (exemplo@email.com)'
+  } else {
+    errors.value.email = ''
+  }
+}
+
+const validateTelefone = () => {
+  const telefone = form.value.telefone.trim()
+  if (!telefone) {
+    errors.value.telefone = ''
+    return
+  }
+  
+  const cleanTelefone = telefone.replace(/\D/g, '')
+  if (cleanTelefone.length < 10) {
+    errors.value.telefone = 'Telefone deve ter pelo menos 10 dígitos'
+  } else if (cleanTelefone.length > 11) {
+    errors.value.telefone = 'Telefone deve ter no máximo 11 dígitos'
+  } else {
+    errors.value.telefone = ''
+  }
 }
 
 const handleConfirm = async () => {
@@ -184,13 +271,17 @@ const handleConfirm = async () => {
       // TODO: Implementar função de editar cliente
       console.log('Editar cliente ainda não implementado')
     } else {
+      // Preparar dados limpos (sem formatação)
+      const cpfLimpo = form.value.cpf.replace(/\D/g, '')
+      const telefoneLimpo = form.value.telefone.replace(/\D/g, '') || null
+      
       // Inserir novo cliente
       await inserirCliente(
         form.value.nome_cliente.trim(),
-        form.value.cpf.trim(),
+        cpfLimpo,
         form.value.endereco.trim() || null,
         form.value.email.trim() || null,
-        form.value.telefone.trim() || null
+        telefoneLimpo
       )
       
       showSuccess('Cliente criado com sucesso!')
@@ -200,7 +291,6 @@ const handleConfirm = async () => {
   } catch (error) {
     console.error('Erro ao salvar cliente:', error)
     showError('Erro ao salvar cliente. Tente novamente.')
-    errors.value.nome_cliente = 'Erro ao salvar cliente. Tente novamente.'
   } finally {
     loading.value = false
   }
@@ -219,11 +309,68 @@ const loadCliente = () => {
   
   // Preencher formulário com dados já disponíveis
   form.value.nome_cliente = props.cliente.nome_cliente || ''
-  form.value.cpf = props.cliente.cpf || ''
+  
+  // Aplicar máscara no CPF se houver dados
+  if (props.cliente.cpf) {
+    const cpf = props.cliente.cpf.replace(/\D/g, '')
+    form.value.cpf = formatCpfMask(cpf)
+  } else {
+    form.value.cpf = ''
+  }
+  
   form.value.email = props.cliente.email || ''
-  form.value.telefone = props.cliente.telefone || ''
+  
+  // Aplicar máscara no telefone se houver dados
+  if (props.cliente.telefone) {
+    const telefone = props.cliente.telefone.replace(/\D/g, '')
+    form.value.telefone = formatTelefoneMask(telefone)
+  } else {
+    form.value.telefone = ''
+  }
+  
   form.value.endereco = props.cliente.endereco || ''
 }
+
+// Funções para aplicar máscaras
+const formatCpfMask = (value: string) => {
+  const cleanValue = value.replace(/\D/g, '')
+  if (cleanValue.length <= 11) {
+    return cleanValue
+      .replace(/(\d{3})(\d)/, '$1.$2')
+      .replace(/(\d{3})(\d)/, '$1.$2')
+      .replace(/(\d{3})(\d{1,2})$/, '$1-$2')
+  }
+  return cleanValue
+}
+
+const formatTelefoneMask = (value: string) => {
+  const cleanValue = value.replace(/\D/g, '')
+  if (cleanValue.length <= 11) {
+    return cleanValue
+      .replace(/(\d{2})(\d)/, '($1)$2')
+      .replace(/(\d{5})(\d{1,4})$/, '$1-$2')
+  }
+  return cleanValue
+}
+
+// Watchers para formatação automática
+watch(() => form.value.cpf, (newValue) => {
+  if (newValue) {
+    const formatted = formatCpfMask(newValue)
+    if (formatted !== newValue) {
+      form.value.cpf = formatted
+    }
+  }
+})
+
+watch(() => form.value.telefone, (newValue) => {
+  if (newValue) {
+    const formatted = formatTelefoneMask(newValue)
+    if (formatted !== newValue) {
+      form.value.telefone = formatted
+    }
+  }
+})
 
 // Watchers
 watch(
