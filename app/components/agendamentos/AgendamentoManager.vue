@@ -11,15 +11,15 @@
       <!-- Lado esquerdo: Régua de horários -->
       <ReguaHorarios />
       
-      <!-- Lado direito: Área de agendamentos -->
-      <div class="flex-1 bg-white">
-        <!-- Grid de agendamentos (será implementado) -->
-        <div class="h-full flex items-center justify-center">
-          <div class="text-center">
-            <h3 class="text-lg font-semibold text-gray-700">Área de Agendamentos</h3>
-            <p class="text-sm text-gray-500">Grid dos horários será implementado aqui</p>
-          </div>
-        </div>
+      <!-- Lado direito: Grid dos dias da semana -->
+      <div class="flex-1 flex bg-white">
+        <!-- Iteração pelos 7 dias da semana -->
+        <ItemAgendamento 
+          v-for="dia in agendamentoStore.semanaAtual" 
+          :key="dia.data.toISOString()"
+          :data="dia.data"
+          class="flex-1 border-r border-gray-200 last:border-r-0"
+        />
       </div>
     </div>
   </div>
@@ -29,6 +29,11 @@
 // Import explícito dos componentes
 import ControladorSemana from './ControladorSemana.vue'
 import ReguaHorarios from './ReguaHorarios.vue'
+import ItemAgendamento from './ItemAgendamento.vue'
+import { useAgendamentoStore } from '../../stores/agendamento'
+
+// Acessar o store de agendamentos
+const agendamentoStore = useAgendamentoStore()
 
 // Componente principal para gerenciar agendamentos
 // Por enquanto apenas estrutura básica

@@ -1,7 +1,7 @@
 <template>
   <div class="w-20 bg-white border-r border-gray-200">
     <!-- Lista de horários -->
-    <div class="py-2">
+    <div>
       <div 
         v-for="hora in horarios" 
         :key="hora"

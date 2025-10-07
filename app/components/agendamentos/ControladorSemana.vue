@@ -1,11 +1,11 @@
 <template>
-  <div class="bg-white p-4 w-full">
+  <div class="bg-white w-full">
     <!-- Primeira linha: Data, botões e botão Novo -->
-    <div class="flex items-center">
+    <div class="flex items-center p-4">
       <!-- Lado esquerdo: Data e botões de navegação (largura fixa) -->
       <div class="w-64 flex items-center space-x-4">
         <!-- Período da semana -->
-        <div class="text-sm font-medium text-gray-700">
+        <div class="text-lg font-medium text-gray-700">
           {{ formatarData(primeiroDia) }} - {{ formatarData(ultimoDia) }}
         </div>
         
@@ -14,19 +14,19 @@
           <!-- Botão voltar semana -->
           <button 
             @click="voltarSemana"
-            class="p-2 rounded-lg border border-gray-300 hover:bg-gray-50 transition-colors"
+            class="p-3 rounded-lg border border-gray-300 hover:bg-gray-50 transition-colors"
             title="Semana anterior"
           >
-            <ChevronLeftIcon class="h-5 w-5 text-gray-600" />
+            <ChevronLeftIcon class="h-6 w-6 text-gray-600" />
           </button>
           
           <!-- Botão avançar semana -->
           <button 
             @click="avancarSemana"
-            class="p-2 rounded-lg border border-gray-300 hover:bg-gray-50 transition-colors"
+            class="p-3 rounded-lg border border-gray-300 hover:bg-gray-50 transition-colors"
             title="Próxima semana"
           >
-            <ChevronRightIcon class="h-5 w-5 text-gray-600" />
+            <ChevronRightIcon class="h-6 w-6 text-gray-600" />
           </button>
         </div>
       </div>
@@ -40,7 +40,7 @@
       <div class="w-64 flex justify-end">
         <BaseButton
           variant="primary"
-          size="md"
+          size="lg"
           @click="novoAgendamento"
         >
           Novo

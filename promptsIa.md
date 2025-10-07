@@ -1120,3 +1120,76 @@ E no caso do telefone colocar mascara (ddd)numero ex: (11)99999-8888
 
 terminei ajustanmdo
 5.5.9 Componente Régua de Horários
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+-------------------------Agora eu quero que vc crie um componente chamado itemAgendamento...
+
+esse componente coloca no corpo do #file:AgendamentoManager.vue , ao lado da Regua de Horarios...
+
+esse componente é que vai listar os slotes de agendamentos que iremos criar depois...
+
+entaol esse componente itemAgendamento de receber como parametro uma data...
+
+então no corpo do agendamento manager vc cria uma div ali... ao lado da regua e lista esse compoennte item nos 7 dias do array que temos no pinia do agendamento...
+
+faça isso por enquanto para eu ver
+
+não esqueça de alinhar as linhas da regua com a linha de baixo dos itemagendamento
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

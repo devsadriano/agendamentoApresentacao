@@ -4,10 +4,10 @@
       Carregando...
     </div>
     <div v-else-if="profissionalAtivo" class="space-y-1">
-      <h3 class="text-lg font-semibold text-gray-800 uppercase">
+      <h3 class="text-xl font-semibold text-gray-800 uppercase">
         {{ profissionalAtivo.nome_profissional }}
       </h3>
-      <p class="text-sm text-gray-600">
+      <p class="text-base text-gray-600">
         {{ profissionalAtivo.especialidade_profissional }}
       </p>
     </div>
