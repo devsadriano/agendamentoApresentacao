@@ -1,5 +1,5 @@
-<template>
-  <div class="flex flex-col items-center p-3 flex-1 relative">
+﻿<template>
+  <div class="flex flex-col items-center px-3 py-8 flex-1 relative">
     <!-- Linha divisória vertical (não encosta nas bordas) -->
     <div 
       v-if="!isUltimo" 

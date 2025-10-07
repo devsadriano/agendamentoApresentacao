@@ -1116,3 +1116,7 @@ no caso do email, se preenchido, verificar se é email valido com o @ se nao pre
 
 E no caso do telefone colocar mascara (ddd)numero ex: (11)99999-8888
 
+
+
+terminei ajustanmdo
+5.5.9 Componente Régua de Horários

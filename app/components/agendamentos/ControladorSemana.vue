@@ -1,5 +1,5 @@
 <template>
-  <div class="bg-white rounded-lg shadow-sm border-b border-gray-200 p-4 w-full">
+  <div class="bg-white p-4 w-full">
     <!-- Primeira linha: Data, botões e botão Novo -->
     <div class="flex items-center">
       <!-- Lado esquerdo: Data e botões de navegação (largura fixa) -->
