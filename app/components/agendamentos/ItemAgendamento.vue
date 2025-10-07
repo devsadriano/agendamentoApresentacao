@@ -1,12 +1,12 @@
 <template>
-  <div class="flex flex-col w-full relative">
+  <div class="flex flex-col w-full relative mx-1" style="background-color: #F3F4F6;">
     <!-- Slots de agendamento alinhados com a régua -->
     <div class="relative">
       <!-- Grid de horários base -->
       <div 
         v-for="hora in horarios" 
         :key="hora"
-        class="h-24 border-b border-gray-100"
+        class="h-24"
       >
       </div>
       

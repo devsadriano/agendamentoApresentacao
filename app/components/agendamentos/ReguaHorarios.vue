@@ -1,11 +1,11 @@
 <template>
-  <div class="w-20 bg-white border-r border-gray-200">
+  <div class="w-20 mr-1" style="background-color: #FAFAFA;">
     <!-- Lista de horários -->
     <div>
       <div 
         v-for="hora in horarios" 
         :key="hora"
-        class="h-24 flex items-start justify-end pr-2 text-sm text-gray-500 border-b border-gray-100"
+        class="h-24 flex items-center justify-center text-sm text-gray-500 border-b border-gray-200"
       >
         {{ hora }}
       </div>

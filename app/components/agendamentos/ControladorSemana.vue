@@ -1,5 +1,5 @@
 <template>
-  <div class="bg-white w-full">
+  <div class="w-full" style="background-color: #FAFAFA;">
     <!-- Primeira linha: Data, botões e botão Novo -->
     <div class="flex items-center p-4">
       <!-- Lado esquerdo: Data e botões de navegação (largura fixa) -->

@@ -1,6 +1,6 @@
 <template>
   <div 
-    class="absolute left-1 right-1 bg-blue-100 border border-blue-300 rounded-md p-2 shadow-sm hover:shadow-md transition-shadow cursor-pointer"
+    class="absolute left-1 right-1 bg-blue-100 rounded-md p-2 shadow-sm hover:shadow-md transition-shadow cursor-pointer"
     :style="positionStyle"
   >
     <!-- Horário -->

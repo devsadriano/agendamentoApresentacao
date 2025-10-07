@@ -1,7 +1,7 @@
 <template>
-  <div class="bg-white flex mb-4">
+  <div class="flex" style="background-color: #FAFAFA;">
     <!-- Espaço para compensar a largura da régua -->
-    <div class="w-20"></div>
+    <div class="w-20 mr-1"></div>
     
     <!-- Header dos dias da semana -->
     <div class="flex flex-1">

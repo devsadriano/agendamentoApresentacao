@@ -1,19 +1,16 @@
 ﻿<template>
-  <div class="flex flex-col items-center px-3 py-8 flex-1 relative">
-    <!-- Linha divisória vertical parcial (não encosta nas bordas) -->
-    <div 
-      v-if="!isUltimo"
-      class="absolute right-0 top-4 bottom-4 w-px bg-gray-200"
-    ></div>
-    
-    <!-- Dia da semana por extenso (ex: DOM, SEG) -->
-    <div class="text-sm font-medium text-gray-500 uppercase mb-2">
-      {{ diaSemanaAbrev }}
-    </div>
-    
-    <!-- Número do dia -->
-    <div class="text-4xl font-semibold text-gray-800">
-      {{ dia.diaNumero }}
+  <div class="flex flex-col items-center flex-1 relative rounded-t-3xl mx-1" style="background-color: #F3F4F6;">
+    <!-- Conteúdo do dia com padding -->
+    <div class="flex flex-col items-center px-3 py-6">
+      <!-- Número do dia -->
+      <div class="text-4xl font-semibold text-gray-800 mb-2">
+        {{ dia.diaNumero }}
+      </div>
+      
+      <!-- Dia da semana por extenso (ex: DOM, SEG) -->
+      <div class="text-sm font-medium text-gray-600 uppercase">
+        {{ diaSemanaAbrev }}
+      </div>
     </div>
   </div>
 </template>
