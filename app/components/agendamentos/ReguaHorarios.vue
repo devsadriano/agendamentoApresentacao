@@ -5,7 +5,7 @@
       <div 
         v-for="hora in horarios" 
         :key="hora"
-        class="h-16 flex items-start justify-end pr-2 text-sm text-gray-500 border-b border-gray-100"
+        class="h-24 flex items-start justify-end pr-2 text-sm text-gray-500 border-b border-gray-100"
       >
         {{ hora }}
       </div>
