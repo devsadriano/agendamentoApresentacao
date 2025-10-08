@@ -18,53 +18,13 @@
 </template>
 
 <script setup lang="ts">
-import type { Profissional } from '../../../shared/types/database'
+import { useProfissionalAtivo } from '../../composables/useProfissionalAtivo'
 
-// Stores e composables
-const userStore = useUserStore()
-const { buscarProfissionais } = useProfissionais()
+// Usar o composable compartilhado do profissional ativo
+const { profissionalAtivo, loading, error, carregarProfissionalAtivo } = useProfissionalAtivo()
 
-// Estados reativos
-const profissionais = ref<Profissional[]>([])
-const loading = ref(true)
-const error = ref<string | null>(null)
-
-// Computed para encontrar o profissional ativo
-const profissionalAtivo = computed(() => {
-  if (profissionais.value.length === 0) return null
-
-  // Se o usuário está logado, buscar pelo profile_id
-  if (userStore.userProfile?.id) {
-    const profissionalLogado = profissionais.value.find(
-      prof => prof.profile_id === userStore.userProfile?.id
-    )
-    
-    if (profissionalLogado) {
-      return profissionalLogado
-    }
-  }
-
-  // Se não encontrou ou não está logado, retorna o primeiro da lista
-  return profissionais.value[0] || null
-})
-
-// Função para carregar profissionais
-const carregarProfissionais = async () => {
-  loading.value = true
-  error.value = null
-
-  try {
-    profissionais.value = await buscarProfissionais()
-  } catch (err) {
-    error.value = err instanceof Error ? err.message : 'Erro ao carregar profissionais'
-    console.error('Erro ao carregar profissionais:', err)
-  } finally {
-    loading.value = false
-  }
-}
-
-// Carregar profissionais ao montar o componente
+// Carregar profissional ativo ao montar o componente
 onMounted(async () => {
-  await carregarProfissionais()
+  await carregarProfissionalAtivo()
 })
 </script>

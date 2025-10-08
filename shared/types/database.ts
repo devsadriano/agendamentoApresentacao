@@ -61,6 +61,22 @@ export interface DiaSemana {
   mesAno: string
 }
 
+// Tipos para agendamentos baseado na tabela ag_agendamentos
+export interface Agendamento {
+  id: number
+  created_at: string
+  user_id: string | null
+  profissional_id: number | null
+  cliente_id: number | null
+  data: string | null
+  hora_inicio: string | null
+  hora_fim: string | null
+  titulo: string | null
+  descricao: string | null
+  cancelado: boolean | null
+  cancelado_as: string | null
+}
+
 // Estado do store de agendamentos
 export interface AgendamentoState {
   dataReferencia: Date

@@ -18,6 +18,8 @@
           v-for="dia in agendamentoStore.semanaAtual" 
           :key="dia.data.toISOString()"
           :data="dia.data"
+          :agendamentos="getAgendamentosDoDia(dia.data)"
+          :loading="loadingAgendamentos"
           class="flex-1"
         />
       </div>
@@ -31,10 +33,45 @@ import ControladorSemana from './ControladorSemana.vue'
 import ReguaHorarios from './ReguaHorarios.vue'
 import ItemAgendamento from './ItemAgendamento.vue'
 import { useAgendamentoStore } from '../../stores/agendamento'
+import { useProfissionalAtivo } from '../../composables/useProfissionalAtivo'
+import { useAgendamento } from '../../composables/useAgendamento'
+import type { Agendamento } from '../../../shared/types/database'
 
 // Acessar o store de agendamentos
 const agendamentoStore = useAgendamentoStore()
 
+// Acessar o profissional ativo
+const { profissionalAtivo } = useProfissionalAtivo()
+
+// Usar o composable de agendamento
+const { buscarAgendamentosPorProfissional, loading: loadingAgendamentos, error } = useAgendamento()
+
+// Estado reativo para todos os agendamentos do profissional
+const todosAgendamentos = ref<Agendamento[]>([])
+
+/**
+ * Filtra agendamentos de uma data específica
+ */
+const getAgendamentosDoDia = (data: Date): Agendamento[] => {
+  const diaAtual = data.toISOString().split('T')[0] // formato YYYY-MM-DD
+  
+  return todosAgendamentos.value.filter(agendamento => 
+    agendamento.data === diaAtual
+  )
+}
+
+/**
+ * Busca todos os agendamentos quando o profissional ativo mudar
+ */
+watch(profissionalAtivo, async (novoProfissional) => {
+  if (novoProfissional?.profissional_id) {
+    console.log('🔄 Carregando agendamentos para profissional:', novoProfissional.nome_profissional)
+    todosAgendamentos.value = await buscarAgendamentosPorProfissional(novoProfissional.profissional_id)
+    console.log('✅ Agendamentos carregados:', todosAgendamentos.value.length)
+  } else {
+    todosAgendamentos.value = []
+  }
+}, { immediate: true })
+
 // Componente principal para gerenciar agendamentos
-// Por enquanto apenas estrutura básica
 </script>
