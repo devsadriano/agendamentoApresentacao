@@ -30,6 +30,8 @@
       v-model="showModalNovoAgendamento"
       :profissional-ativo="profissionalAtivo"
       :dias-semana="agendamentoStore.semanaAtual"
+      :clientes="clientes"
+      :carregando-clientes="carregandoClientes"
       @salvar="handleNovoAgendamento"
     />
   </div>
@@ -44,7 +46,8 @@ import ModalNovoAgendamento from './ModalNovoAgendamento.vue'
 import { useAgendamentoStore } from '../../stores/agendamento'
 import { useProfissionalAtivo } from '../../composables/useProfissionalAtivo'
 import { useAgendamento } from '../../composables/useAgendamento'
-import type { Agendamento } from '../../../shared/types/database'
+import { useProfissionais } from '../../composables/useProfissionais'
+import type { Agendamento, Cliente } from '../../../shared/types/database'
 
 // Acessar o store de agendamentos
 const agendamentoStore = useAgendamentoStore()
@@ -55,8 +58,15 @@ const { profissionalAtivo } = useProfissionalAtivo()
 // Usar o composable de agendamento
 const { buscarAgendamentosPorProfissionalEPeriodo, loading: loadingAgendamentos, error } = useAgendamento()
 
+// Usar o composable de profissionais para buscar clientes
+const { buscarClientes } = useProfissionais()
+
 // Estado reativo para todos os agendamentos do profissional
 const todosAgendamentos = ref<Agendamento[]>([])
+
+// Estado reativo para clientes
+const clientes = ref<Cliente[]>([])
+const carregandoClientes = ref(false)
 
 /**
  * Calcula as datas de início e fim da semana atual
@@ -114,6 +124,24 @@ const buscarAgendamentosSemana = async () => {
 }
 
 /**
+ * Busca clientes em segundo plano
+ */
+const buscarClientesBackground = async () => {
+  try {
+    carregandoClientes.value = true
+    console.log('🔄 Buscando clientes em segundo plano...')
+    
+    clientes.value = await buscarClientes()
+    
+    console.log('✅ Clientes carregados:', clientes.value.length)
+  } catch (error) {
+    console.error('❌ Erro ao buscar clientes:', error)
+  } finally {
+    carregandoClientes.value = false
+  }
+}
+
+/**
  * Watch para reagir a mudanças no profissional ativo
  */
 watch(profissionalAtivo, buscarAgendamentosSemana, { immediate: true })
@@ -122,6 +150,11 @@ watch(profissionalAtivo, buscarAgendamentosSemana, { immediate: true })
  * Watch para reagir a mudanças na semana
  */
 watch(periodoSemanaAtual, buscarAgendamentosSemana)
+
+// Buscar clientes quando o componente for montado
+onMounted(() => {
+  buscarClientesBackground()
+})
 
 // Estado do modal
 const showModalNovoAgendamento = ref(false)

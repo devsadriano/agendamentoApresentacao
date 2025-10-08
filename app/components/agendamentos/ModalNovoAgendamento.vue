@@ -40,21 +40,54 @@
         <label class="block text-sm font-medium text-gray-700 mb-2">
           Cliente <span class="text-red-500">*</span>
         </label>
-        <select 
-          v-model="form.clienteId"
-          class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-          required
-        >
-          <option value="">Selecione um cliente</option>
-          <option value="1">João Silva</option>
-          <option value="2">Maria Santos</option>
-          <option value="3">Pedro Oliveira</option>
-        </select>
+        
+        <!-- Dropdown pesquisável -->
+        <div class="relative">
+          <input
+            v-model="pesquisaCliente"
+            type="text"
+            placeholder="Digite para pesquisar ou selecionar cliente..."
+            class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+            @focus="mostrarDropdownClientes = true"
+            @blur="ocultarDropdownComDelay"
+          />
+          
+          <!-- Loading indicator -->
+          <div v-if="carregandoClientes" class="absolute right-3 top-3">
+            <div class="animate-spin rounded-full h-4 w-4 border-b-2 border-blue-600"></div>
+          </div>
+          
+          <!-- Dropdown lista de clientes -->
+          <div 
+            v-if="mostrarDropdownClientes && clientesFiltrados.length > 0"
+            class="absolute z-50 w-full mt-1 bg-white border border-gray-300 rounded-lg shadow-lg max-h-60 overflow-y-auto"
+          >
+            <button
+              v-for="cliente in clientesFiltrados"
+              :key="cliente.id"
+              type="button"
+              class="w-full px-3 py-2 text-left hover:bg-gray-50 focus:bg-gray-50 border-b border-gray-100 last:border-b-0"
+              @mousedown.prevent="selecionarCliente(cliente)"
+            >
+              <div class="text-sm font-medium text-gray-900">{{ cliente.nome_cliente }}</div>
+              <div v-if="cliente.telefone" class="text-xs text-gray-500">{{ cliente.telefone }}</div>
+            </button>
+          </div>
+          
+          <!-- Mensagem quando não há clientes -->
+          <div 
+            v-else-if="mostrarDropdownClientes && !carregandoClientes && clientes.length === 0"
+            class="absolute z-50 w-full mt-1 bg-white border border-gray-300 rounded-lg shadow-lg p-3"
+          >
+            <div class="text-sm text-gray-500 text-center">Nenhum cliente encontrado</div>
+          </div>
+        </div>
+        
         <p class="mt-1 text-xs text-gray-500">
           Não encontrou o cliente? 
-          <button type="button" class="text-blue-600 hover:text-blue-800 underline">
+          <NuxtLink to="/clientes" class="text-blue-600 hover:text-blue-800 underline">
             Cadastrar novo cliente
-          </button>
+          </NuxtLink>
         </p>
       </div>
 
@@ -175,12 +208,14 @@
 <script setup lang="ts">
 import BaseModal from '../BaseModal.vue'
 import BaseInput from '../BaseInput.vue'
-import type { Profissional, DiaSemana } from '../../../shared/types/database'
+import type { Profissional, DiaSemana, Cliente } from '../../../shared/types/database'
 
 interface Props {
   modelValue: boolean
   profissionalAtivo: Profissional | null
   diasSemana: DiaSemana[]
+  clientes: Cliente[]
+  carregandoClientes?: boolean
 }
 
 interface FormData {
@@ -217,6 +252,11 @@ const form = ref<FormData>({
   horaFim: ''
 })
 
+// Estado do dropdown de clientes
+const pesquisaCliente = ref('')
+const mostrarDropdownClientes = ref(false)
+const clienteSelecionado = ref<Cliente | null>(null)
+
 // Horários disponíveis (8h às 22h, de 30 em 30 minutos)
 const horariosDisponiveis = computed(() => {
   const horarios = []
@@ -233,15 +273,53 @@ const horariosDisponiveis = computed(() => {
 const horariosFimDisponiveis = computed(() => {
   if (!form.value.horaInicio) return []
   
-  const [horaInicio, minutoInicio] = form.value.horaInicio.split(':').map(Number)
+  const horarioInicioPartes = form.value.horaInicio.split(':').map(Number)
+  if (horarioInicioPartes.length !== 2) return []
+  
+  const [horaInicio, minutoInicio] = horarioInicioPartes
+  if (horaInicio === undefined || minutoInicio === undefined) return []
+  
   const minutosInicio = horaInicio * 60 + minutoInicio
   
   return horariosDisponiveis.value.filter(horario => {
-    const [hora, minuto] = horario.split(':').map(Number)
+    const horarioFimPartes = horario.split(':').map(Number)
+    if (horarioFimPartes.length !== 2) return false
+    
+    const [hora, minuto] = horarioFimPartes
+    if (hora === undefined || minuto === undefined) return false
+    
     const minutosFim = hora * 60 + minuto
     return minutosFim > minutosInicio // Hora fim deve ser maior que hora início
   })
 })
+
+// Computed para filtrar clientes baseado na pesquisa
+const clientesFiltrados = computed(() => {
+  if (!pesquisaCliente.value.trim()) {
+    return props.clientes.slice(0, 10) // Mostrar apenas 10 primeiros se não há pesquisa
+  }
+  
+  const termo = pesquisaCliente.value.toLowerCase()
+  return props.clientes.filter(cliente => 
+    cliente.nome_cliente?.toLowerCase().includes(termo) ||
+    (cliente.telefone && cliente.telefone.includes(termo))
+  ).slice(0, 10) // Limitar a 10 resultados
+})
+
+// Funções para dropdown de clientes
+const selecionarCliente = (cliente: Cliente) => {
+  clienteSelecionado.value = cliente
+  form.value.clienteId = cliente.id.toString()
+  pesquisaCliente.value = cliente.nome_cliente || ''
+  mostrarDropdownClientes.value = false
+}
+
+const ocultarDropdownComDelay = () => {
+  // Delay para permitir clique nos itens do dropdown
+  setTimeout(() => {
+    mostrarDropdownClientes.value = false
+  }, 200)
+}
 
 // Funções
 const formatarDataCompleta = (data: Date): string => {
@@ -277,5 +355,10 @@ const fecharModal = () => {
     horaInicio: '',
     horaFim: ''
   }
+  
+  // Resetar estado do dropdown de clientes
+  pesquisaCliente.value = ''
+  clienteSelecionado.value = null
+  mostrarDropdownClientes.value = false
 }
 </script>
