@@ -44,10 +44,25 @@ const agendamentoStore = useAgendamentoStore()
 const { profissionalAtivo } = useProfissionalAtivo()
 
 // Usar o composable de agendamento
-const { buscarAgendamentosPorProfissional, loading: loadingAgendamentos, error } = useAgendamento()
+const { buscarAgendamentosPorProfissionalEPeriodo, loading: loadingAgendamentos, error } = useAgendamento()
 
 // Estado reativo para todos os agendamentos do profissional
 const todosAgendamentos = ref<Agendamento[]>([])
+
+/**
+ * Calcula as datas de início e fim da semana atual
+ */
+const periodoSemanaAtual = computed(() => {
+  const semana = agendamentoStore.semanaAtual
+  if (semana.length === 0 || !semana[0] || !semana[6]) {
+    return { inicio: '', fim: '' }
+  }
+  
+  const dataInicio = semana[0].data.toISOString().split('T')[0] // formato YYYY-MM-DD
+  const dataFim = semana[6].data.toISOString().split('T')[0]   // formato YYYY-MM-DD
+  
+  return { inicio: dataInicio, fim: dataFim }
+})
 
 /**
  * Filtra agendamentos de uma data específica
@@ -61,17 +76,43 @@ const getAgendamentosDoDia = (data: Date): Agendamento[] => {
 }
 
 /**
- * Busca todos os agendamentos quando o profissional ativo mudar
+ * Busca agendamentos quando profissional ou semana mudarem
  */
-watch(profissionalAtivo, async (novoProfissional) => {
-  if (novoProfissional?.profissional_id) {
-    console.log('🔄 Carregando agendamentos para profissional:', novoProfissional.nome_profissional)
-    todosAgendamentos.value = await buscarAgendamentosPorProfissional(novoProfissional.profissional_id)
-    console.log('✅ Agendamentos carregados:', todosAgendamentos.value.length)
-  } else {
+const buscarAgendamentosSemana = async () => {
+  if (!profissionalAtivo.value?.profissional_id) {
     todosAgendamentos.value = []
+    return
   }
-}, { immediate: true })
+
+  const periodo = periodoSemanaAtual.value
+  if (!periodo.inicio || !periodo.fim) {
+    todosAgendamentos.value = []
+    return
+  }
+
+  console.log('🔄 Buscando agendamentos:', {
+    profissional: profissionalAtivo.value.nome_profissional,
+    periodo: `${periodo.inicio} a ${periodo.fim}`
+  })
+
+  todosAgendamentos.value = await buscarAgendamentosPorProfissionalEPeriodo(
+    profissionalAtivo.value.profissional_id,
+    periodo.inicio,
+    periodo.fim
+  )
+
+  console.log('✅ Agendamentos carregados:', todosAgendamentos.value.length)
+}
+
+/**
+ * Watch para reagir a mudanças no profissional ativo
+ */
+watch(profissionalAtivo, buscarAgendamentosSemana, { immediate: true })
+
+/**
+ * Watch para reagir a mudanças na semana
+ */
+watch(periodoSemanaAtual, buscarAgendamentosSemana)
 
 // Componente principal para gerenciar agendamentos
 </script>

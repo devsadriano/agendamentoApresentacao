@@ -1,14 +1,80 @@
 import type { Agendamento } from '../../shared/types/database'
 
+// Cache global de agendamentos por profissional e período
+type CacheKey = string // formato: "profissional_id:YYYY-MM-DD:YYYY-MM-DD"
+const cacheAgendamentos = new Map<CacheKey, Agendamento[]>()
+
 export const useAgendamento = () => {
   const loading = ref(false)
   const error = ref<string | null>(null)
 
   /**
-   * Busca agendamentos por profissional
+   * Gera chave de cache baseada no profissional e período
+   */
+  const gerarChaveCache = (profissionalId: number, dataInicio: string, dataFim: string): CacheKey => {
+    return `${profissionalId}:${dataInicio}:${dataFim}`
+  }
+
+  /**
+   * Busca agendamentos por profissional em um período específico
    * Filtra apenas agendamentos não cancelados (cancelado = false)
+   * Implementa cache para evitar requisições desnecessárias
    * @param profissionalId - ID do profissional
-   * @returns Lista de agendamentos do profissional
+   * @param dataInicio - Data de início no formato YYYY-MM-DD
+   * @param dataFim - Data de fim no formato YYYY-MM-DD
+   * @returns Lista de agendamentos do profissional no período
+   */
+  const buscarAgendamentosPorProfissionalEPeriodo = async (
+    profissionalId: number, 
+    dataInicio: string, 
+    dataFim: string
+  ): Promise<Agendamento[]> => {
+    // Verificar cache primeiro
+    const chaveCache = gerarChaveCache(profissionalId, dataInicio, dataFim)
+    if (cacheAgendamentos.has(chaveCache)) {
+      console.log('📦 Cache hit:', chaveCache)
+      return cacheAgendamentos.get(chaveCache)!
+    }
+
+    loading.value = true
+    error.value = null
+
+    try {
+      const supabase = useSupabaseClient()
+      
+      const { data, error: fetchError } = await supabase
+        .from('ag_agendamentos')
+        .select('*')
+        .eq('profissional_id', profissionalId)
+        .eq('cancelado', false)
+        .gte('data', dataInicio) // maior ou igual à data de início
+        .lte('data', dataFim)    // menor ou igual à data de fim
+        .order('data', { ascending: true })
+        .order('hora_inicio', { ascending: true })
+
+      if (fetchError) {
+        throw fetchError
+      }
+
+      const agendamentos = data || []
+      
+      // Armazenar no cache
+      cacheAgendamentos.set(chaveCache, agendamentos)
+      console.log('💾 Cache armazenado:', chaveCache, `${agendamentos.length} agendamentos`)
+
+      return agendamentos
+    } catch (err: any) {
+      error.value = err.message || 'Erro ao buscar agendamentos'
+      console.error('Erro ao buscar agendamentos:', err)
+      return []
+    } finally {
+      loading.value = false
+    }
+  }
+
+  /**
+   * Função legada - mantida para compatibilidade
+   * @deprecated Use buscarAgendamentosPorProfissionalEPeriodo
    */
   const buscarAgendamentosPorProfissional = async (profissionalId: number): Promise<Agendamento[]> => {
     loading.value = true
@@ -17,33 +83,6 @@ export const useAgendamento = () => {
     try {
       const supabase = useSupabaseClient()
       
-      console.log('🔍 Iniciando busca para profissional ID:', profissionalId)
-      
-      // Debug: Testar query sem filtros primeiro
-      console.log('🧪 Testando query SEM filtros...')
-      const { data: todosDados, error: erroTodos } = await supabase
-        .from('ag_agendamentos')
-        .select('*')
-      
-      console.log('📊 Todos os registros na tabela:', todosDados?.length || 0)
-      if (erroTodos) {
-        console.error('❌ Erro ao buscar todos:', erroTodos)
-      }
-      
-      // Debug: Testar apenas filtro por profissional
-      console.log('🧪 Testando query COM filtro profissional_id...')
-      const { data: dadosProfissional, error: erroProfissional } = await supabase
-        .from('ag_agendamentos')
-        .select('*')
-        .eq('profissional_id', profissionalId)
-      
-      console.log('📊 Registros para profissional', profissionalId + ':', dadosProfissional?.length || 0)
-      if (erroProfissional) {
-        console.error('❌ Erro filtro profissional:', erroProfissional)
-      }
-      
-      // Query final com todos os filtros
-      console.log('🎯 Executando query FINAL...')
       const { data, error: fetchError } = await supabase
         .from('ag_agendamentos')
         .select('*')
@@ -52,26 +91,48 @@ export const useAgendamento = () => {
         .order('data', { ascending: true })
         .order('hora_inicio', { ascending: true })
 
-      console.log('✅ Resultado final:', data?.length || 0, 'registros')
-      
       if (fetchError) {
-        console.error('❌ Erro na query final:', fetchError)
         throw fetchError
       }
 
       return data || []
     } catch (err: any) {
       error.value = err.message || 'Erro ao buscar agendamentos'
-      console.error('💥 Erro geral:', err)
+      console.error('Erro ao buscar agendamentos:', err)
       return []
     } finally {
       loading.value = false
     }
   }
 
+  /**
+   * Limpa o cache de um profissional específico
+   */
+  const limparCacheProfissional = (profissionalId: number) => {
+    const chavesParaRemover = Array.from(cacheAgendamentos.keys())
+      .filter(chave => chave.startsWith(`${profissionalId}:`))
+    
+    chavesParaRemover.forEach(chave => {
+      cacheAgendamentos.delete(chave)
+    })
+    
+    console.log('🗑️ Cache limpo para profissional:', profissionalId)
+  }
+
+  /**
+   * Limpa todo o cache
+   */
+  const limparTodoCache = () => {
+    cacheAgendamentos.clear()
+    console.log('🗑️ Todo cache limpo')
+  }
+
   return {
     loading: readonly(loading),
     error: readonly(error),
-    buscarAgendamentosPorProfissional
+    buscarAgendamentosPorProfissionalEPeriodo,
+    buscarAgendamentosPorProfissional, // mantido para compatibilidade
+    limparCacheProfissional,
+    limparTodoCache
   }
 }
