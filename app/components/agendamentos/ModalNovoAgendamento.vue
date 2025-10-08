@@ -208,7 +208,7 @@
 <script setup lang="ts">
 import BaseModal from '../BaseModal.vue'
 import BaseInput from '../BaseInput.vue'
-import type { Profissional, DiaSemana, Cliente } from '../../../shared/types/database'
+import type { Profissional, DiaSemana, Cliente, Agendamento } from '../../../shared/types/database'
 
 interface Props {
   modelValue: boolean
@@ -216,6 +216,7 @@ interface Props {
   diasSemana: DiaSemana[]
   clientes: Cliente[]
   carregandoClientes?: boolean
+  agendamentosExistentes: Agendamento[]
 }
 
 interface FormData {
@@ -240,6 +241,16 @@ const showModal = computed({
   set: (value) => emit('update:modelValue', value)
 })
 
+// Watch para debug quando modal abrir
+watch(showModal, (novoValor) => {
+  if (novoValor) {
+    console.log('🚀 Modal aberto - DEBUG COMPLETO:')
+    console.log('📋 Props agendamentosExistentes:', props.agendamentosExistentes)
+    console.log('📅 Dias da semana:', props.diasSemana)
+    console.log('👤 Profissional ativo:', props.profissionalAtivo)
+  }
+})
+
 const loading = ref(false)
 
 // Formulário
@@ -257,7 +268,70 @@ const pesquisaCliente = ref('')
 const mostrarDropdownClientes = ref(false)
 const clienteSelecionado = ref<Cliente | null>(null)
 
-// Horários disponíveis (8h às 22h, de 30 em 30 minutos)
+// Funções auxiliares para cálculo de conflitos
+const converterHorarioParaMinutos = (horario: string): number => {
+  // Limpar o horário removendo timezone e segundos se existirem
+  let horarioLimpo = horario
+  
+  // Se tem formato 'HH:MM:SS.SSS+TZ', extrair apenas 'HH:MM'
+  if (horario.includes(':') && horario.length > 5) {
+    const partes = horario.split(':')
+    if (partes.length >= 2) {
+      horarioLimpo = `${partes[0]}:${partes[1]}`
+    }
+  }
+  
+  console.log(`🕒 Convertendo horário: "${horario}" → "${horarioLimpo}"`)
+  
+  const partes = horarioLimpo.split(':').map(Number)
+  if (partes.length !== 2) {
+    console.error(`❌ Formato de horário inválido: ${horario}`)
+    return 0
+  }
+  
+  const [hora, minuto] = partes
+  if (hora === undefined || minuto === undefined || isNaN(hora) || isNaN(minuto)) {
+    console.error(`❌ Hora ou minuto inválido: ${horario}`)
+    return 0
+  }
+  
+  const totalMinutos = hora * 60 + minuto
+  console.log(`🕒 ${horarioLimpo} = ${totalMinutos} minutos`)
+  return totalMinutos
+}
+
+const verificarConflito = (inicioMinutos: number, fimMinutos: number, agendamento: Agendamento): boolean => {
+  // Verificar se os horários do agendamento existem
+  if (!agendamento.hora_inicio || !agendamento.hora_fim) return false
+  
+  const agendamentoInicioMinutos = converterHorarioParaMinutos(agendamento.hora_inicio)
+  const agendamentoFimMinutos = converterHorarioParaMinutos(agendamento.hora_fim)
+  
+  // Verificar se há sobreposição
+  return !(fimMinutos <= agendamentoInicioMinutos || inicioMinutos >= agendamentoFimMinutos)
+}
+
+const obterAgendamentosDoDia = (dataSelecionada: string): Agendamento[] => {
+  console.log(`📅 Filtrando agendamentos para data: ${dataSelecionada}`)
+  console.log(`📋 Total de agendamentos existentes:`, props.agendamentosExistentes)
+  
+  const agendamentosFiltrados = props.agendamentosExistentes.filter(agendamento => {
+    // Normalizar a data do agendamento (pode vir como YYYY-MM-DD ou YYYY-MM-DDTHH:MM:SS)
+    let dataAgendamento = agendamento.data
+    if (dataAgendamento && dataAgendamento.includes('T')) {
+      const partes = dataAgendamento.split('T')
+      dataAgendamento = partes[0] || dataAgendamento // Pegar apenas YYYY-MM-DD
+    }
+    
+    console.log(`🔍 Comparando: "${dataAgendamento}" === "${dataSelecionada}"`)
+    return dataAgendamento === dataSelecionada
+  })
+  
+  console.log(`📋 Agendamentos do dia ${dataSelecionada}:`, agendamentosFiltrados)
+  return agendamentosFiltrados
+}
+
+// Horários disponíveis (8h às 22h, de 30 em 30 minutos) - Filtrados por conflitos
 const horariosDisponiveis = computed(() => {
   const horarios = []
   for (let hora = 8; hora <= 22; hora++) {
@@ -266,12 +340,73 @@ const horariosDisponiveis = computed(() => {
       horarios.push(`${hora.toString().padStart(2, '0')}:30`)
     }
   }
-  return horarios
+  
+  // Se não há data selecionada, retorna todos os horários
+  if (!form.value.data) {
+    console.log('📅 Nenhuma data selecionada - retornando todos os horários')
+    return horarios
+  }
+  
+  const agendamentosDoDia = obterAgendamentosDoDia(form.value.data)
+  
+  console.log('🔍 Verificando horários para data:', form.value.data)
+  console.log('📋 Agendamentos do dia encontrados:', agendamentosDoDia.length)
+  
+  if (agendamentosDoDia.length === 0) {
+    console.log('✅ Nenhum agendamento no dia - todos os horários liberados')
+    return horarios
+  }
+  
+  // Filtrar horários que não causam conflito
+  const horariosLiberados = horarios.filter(horario => {
+    const horarioMinutos = converterHorarioParaMinutos(horario)
+    
+    console.log(`\n🔍 Testando horário ${horario} (${horarioMinutos} minutos)`)
+    
+    // Para cada agendamento existente, verificar se o horário de início proposto
+    // está dentro do intervalo do agendamento existente
+    const temConflito = agendamentosDoDia.some(agendamento => {
+      if (!agendamento.hora_inicio || !agendamento.hora_fim) {
+        console.log(`⚠️ Agendamento sem horários válidos:`, agendamento)
+        return false
+      }
+      
+      const agendamentoInicioMinutos = converterHorarioParaMinutos(agendamento.hora_inicio)
+      const agendamentoFimMinutos = converterHorarioParaMinutos(agendamento.hora_fim)
+      
+      console.log(`📋 Comparando com agendamento: ${agendamento.hora_inicio}-${agendamento.hora_fim} (${agendamentoInicioMinutos}-${agendamentoFimMinutos} minutos)`)
+      
+      // O horário de início não pode estar dentro de um agendamento existente
+      // Incluindo o horário exato de início do agendamento existente
+      const dentroDoAgendamento = horarioMinutos >= agendamentoInicioMinutos && horarioMinutos < agendamentoFimMinutos
+      
+      console.log(`🔎 ${horario}: ${horarioMinutos} >= ${agendamentoInicioMinutos} && ${horarioMinutos} < ${agendamentoFimMinutos} = ${dentroDoAgendamento}`)
+      
+      if (dentroDoAgendamento) {
+        console.log(`🚫 Horário ${horario} BLOQUEADO - conflita com agendamento ${agendamento.hora_inicio}-${agendamento.hora_fim}`)
+      } else {
+        console.log(`✅ Horário ${horario} LIBERADO - não conflita`)
+      }
+      
+      return dentroDoAgendamento
+    })
+    
+    console.log(`📊 Resultado final para ${horario}: ${temConflito ? 'BLOQUEADO' : 'LIBERADO'}`)
+    return !temConflito
+  })
+  
+  console.log('📊 RESUMO FINAL:')
+  console.log('🕐 Horários testados:', horarios.length)
+  console.log('✅ Horários liberados:', horariosLiberados.length)
+  console.log('🚫 Horários bloqueados:', horarios.length - horariosLiberados.length)
+  console.log('📋 Lista de liberados:', horariosLiberados)
+  
+  return horariosLiberados
 })
 
-// Horários de fim disponíveis (baseado na hora de início)
+// Horários de fim disponíveis (baseado na hora de início e conflitos)
 const horariosFimDisponiveis = computed(() => {
-  if (!form.value.horaInicio) return []
+  if (!form.value.horaInicio || !form.value.data) return []
   
   const horarioInicioPartes = form.value.horaInicio.split(':').map(Number)
   if (horarioInicioPartes.length !== 2) return []
@@ -280,8 +415,18 @@ const horariosFimDisponiveis = computed(() => {
   if (horaInicio === undefined || minutoInicio === undefined) return []
   
   const minutosInicio = horaInicio * 60 + minutoInicio
+  const agendamentosDoDia = obterAgendamentosDoDia(form.value.data)
   
-  return horariosDisponiveis.value.filter(horario => {
+  // Gerar todos os horários possíveis de fim (a partir da hora início + 30min)
+  const horariosPossiveis = []
+  for (let hora = 8; hora <= 22; hora++) {
+    horariosPossiveis.push(`${hora.toString().padStart(2, '0')}:00`)
+    if (hora < 22) {
+      horariosPossiveis.push(`${hora.toString().padStart(2, '0')}:30`)
+    }
+  }
+  
+  return horariosPossiveis.filter(horario => {
     const horarioFimPartes = horario.split(':').map(Number)
     if (horarioFimPartes.length !== 2) return false
     
@@ -289,7 +434,30 @@ const horariosFimDisponiveis = computed(() => {
     if (hora === undefined || minuto === undefined) return false
     
     const minutosFim = hora * 60 + minuto
-    return minutosFim > minutosInicio // Hora fim deve ser maior que hora início
+    
+    // Hora fim deve ser maior que hora início (mínimo 30 minutos)
+    if (minutosFim <= minutosInicio + 30) return false
+    
+    console.log(`🔍 Testando horário fim ${horario} para início ${form.value.horaInicio}`)
+    
+    // Verificar se o período completo (início até fim) não conflita com agendamentos existentes
+    const temConflito = agendamentosDoDia.some(agendamento => {
+      if (!agendamento.hora_inicio || !agendamento.hora_fim) return false
+      
+      const agendamentoInicioMinutos = converterHorarioParaMinutos(agendamento.hora_inicio)
+      const agendamentoFimMinutos = converterHorarioParaMinutos(agendamento.hora_fim)
+      
+      // Verificar se há qualquer sobreposição entre o novo agendamento e o existente
+      const hasSobreposicao = !(minutosFim <= agendamentoInicioMinutos || minutosInicio >= agendamentoFimMinutos)
+      
+      if (hasSobreposicao) {
+        console.log(`🚫 Horário fim ${horario} bloqueado - conflita com agendamento ${agendamento.hora_inicio}-${agendamento.hora_fim}`)
+      }
+      
+      return hasSobreposicao
+    })
+    
+    return !temConflito
   })
 })
 

@@ -3,7 +3,7 @@
     <!-- Header - Agendamentos (altura automática) -->
     <div class="flex items-center">
       <!-- Card único com todos os componentes -->
-      <ControladorSemana @novo-agendamento="showModalNovoAgendamento = true" />
+      <ControladorSemana @novo-agendamento="abrirModalNovoAgendamento" />
     </div>
 
     <!-- Corpo - Conteúdo Principal (ocupa todo o espaço restante) -->
@@ -32,6 +32,7 @@
       :dias-semana="agendamentoStore.semanaAtual"
       :clientes="clientes"
       :carregando-clientes="carregandoClientes"
+      :agendamentos-existentes="todosAgendamentos"
       @salvar="handleNovoAgendamento"
     />
   </div>
@@ -167,6 +168,12 @@ const handleNovoAgendamento = (dadosAgendamento: any) => {
   
   // Recarregar agendamentos após criação
   buscarAgendamentosSemana()
+}
+
+// Função para abrir modal (com logs para debug)
+const abrirModalNovoAgendamento = () => {
+  console.log('📋 Agendamentos sendo passados para o modal:', todosAgendamentos.value)
+  showModalNovoAgendamento.value = true
 }
 
 // Componente principal para gerenciar agendamentos
