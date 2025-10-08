@@ -3,7 +3,7 @@
     <!-- Header - Agendamentos (altura automática) -->
     <div class="flex items-center">
       <!-- Card único com todos os componentes -->
-      <ControladorSemana />
+      <ControladorSemana @novo-agendamento="showModalNovoAgendamento = true" />
     </div>
 
     <!-- Corpo - Conteúdo Principal (ocupa todo o espaço restante) -->
@@ -24,6 +24,14 @@
         />
       </div>
     </div>
+    
+    <!-- Modal Novo Agendamento -->
+    <ModalNovoAgendamento
+      v-model="showModalNovoAgendamento"
+      :profissional-ativo="profissionalAtivo"
+      :dias-semana="agendamentoStore.semanaAtual"
+      @salvar="handleNovoAgendamento"
+    />
   </div>
 </template>
 
@@ -32,6 +40,7 @@
 import ControladorSemana from './ControladorSemana.vue'
 import ReguaHorarios from './ReguaHorarios.vue'
 import ItemAgendamento from './ItemAgendamento.vue'
+import ModalNovoAgendamento from './ModalNovoAgendamento.vue'
 import { useAgendamentoStore } from '../../stores/agendamento'
 import { useProfissionalAtivo } from '../../composables/useProfissionalAtivo'
 import { useAgendamento } from '../../composables/useAgendamento'
@@ -113,6 +122,19 @@ watch(profissionalAtivo, buscarAgendamentosSemana, { immediate: true })
  * Watch para reagir a mudanças na semana
  */
 watch(periodoSemanaAtual, buscarAgendamentosSemana)
+
+// Estado do modal
+const showModalNovoAgendamento = ref(false)
+
+// Função para lidar com novo agendamento
+const handleNovoAgendamento = (dadosAgendamento: any) => {
+  console.log('Novo agendamento:', dadosAgendamento)
+  // TODO: Implementar lógica de criação do agendamento
+  showModalNovoAgendamento.value = false
+  
+  // Recarregar agendamentos após criação
+  buscarAgendamentosSemana()
+}
 
 // Componente principal para gerenciar agendamentos
 </script>

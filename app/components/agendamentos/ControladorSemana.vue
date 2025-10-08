@@ -61,6 +61,9 @@ import BaseButton from '../BaseButton.vue'
 import ProfissionalAtivo from './ProfissionalAtivo.vue'
 import ListaDias from './ListaDias.vue'
 
+// Definir emits
+const emit = defineEmits(['novoAgendamento'])
+
 // Acessar o store de agendamentos
 const agendamentoStore = useAgendamentoStore()
 
@@ -94,7 +97,6 @@ const avancarSemana = () => {
 
 // Função para novo agendamento
 const novoAgendamento = () => {
-  // TODO: Implementar modal ou navegação para criar novo agendamento
-  console.log('Criar novo agendamento')
+  emit('novoAgendamento')
 }
 </script>
