@@ -216,6 +216,16 @@
       </div>
     </div>
   </BaseModal>
+
+  <!-- Modal de confirmação de cancelamento -->
+  <ModalConfirmacaoSimples
+    v-model="showConfirmacaoCancelamento"
+    titulo="Cancelar Agendamento"
+    mensagem="Tem certeza que deseja cancelar este agendamento?"
+    :loading="loading"
+    @confirm="executarCancelamento"
+    @close="fecharConfirmacao"
+  />
 </template>
 
 <script setup lang="ts">
@@ -246,6 +256,7 @@ const { showSuccess, showError } = useNotification()
 
 // Estados reativos
 const loading = ref(false)
+const showConfirmacaoCancelamento = ref(false)
 
 const form = ref({
   titulo: '',
@@ -403,15 +414,11 @@ const handleConfirm = async () => {
   }
 }
 
-const confirmarCancelamento = async () => {
-  // Mostrar alert de confirmação
-  const confirmacao = confirm('Deseja realmente cancelar este agendamento? Esta ação não pode ser desfeita.')
-  
-  if (!confirmacao) {
-    return
-  }
+const confirmarCancelamento = () => {
+  showConfirmacaoCancelamento.value = true
+}
 
-  // Executar cancelamento se confirmado
+const executarCancelamento = async () => {
   if (!props.agendamento) return
   
   loading.value = true
@@ -421,6 +428,7 @@ const confirmarCancelamento = async () => {
     
     showSuccess('Agendamento cancelado com sucesso!')
     emit('cancelado')
+    showConfirmacaoCancelamento.value = false
     handleClose()
   } catch (error) {
     console.error('Erro ao cancelar agendamento:', error)
@@ -428,6 +436,10 @@ const confirmarCancelamento = async () => {
   } finally {
     loading.value = false
   }
+}
+
+const fecharConfirmacao = () => {
+  showConfirmacaoCancelamento.value = false
 }
 
 const handleClose = () => {
