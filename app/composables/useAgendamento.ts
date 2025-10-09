@@ -213,6 +213,106 @@ export const useAgendamento = () => {
     }
   }
 
+  /**
+   * Edita um agendamento existente (apenas título, descrição e cor)
+   * @param id - ID do agendamento
+   * @param dados - Dados a serem atualizados
+   * @returns O agendamento atualizado
+   */
+  const editarAgendamento = async (id: number, dados: {
+    titulo: string
+    descricao?: string | null
+    cor: string
+  }): Promise<Agendamento | null> => {
+    loading.value = true
+    error.value = null
+
+    try {
+      const supabase = useSupabaseClient<any>()
+      
+      const dadosParaAtualizar = {
+        titulo: dados.titulo,
+        descricao: dados.descricao,
+        cor: dados.cor
+      }
+
+      console.log('📝 Editando agendamento ID:', id, dadosParaAtualizar)
+
+      const { data, error: updateError } = await supabase
+        .from('ag_agendamentos')
+        .update(dadosParaAtualizar)
+        .eq('id', id)
+        .select()
+        .single()
+
+      if (updateError) {
+        throw updateError
+      }
+
+      console.log('✅ Agendamento editado com sucesso:', data)
+
+      // Limpar cache do profissional afetado para forçar nova busca
+      if (data.profissional_id) {
+        limparCacheProfissional(data.profissional_id)
+      }
+
+      return data as Agendamento
+    } catch (err: any) {
+      error.value = err.message || 'Erro ao editar agendamento'
+      console.error('❌ Erro ao editar agendamento:', err)
+      return null
+    } finally {
+      loading.value = false
+    }
+  }
+
+  /**
+   * Cancela um agendamento (marca como cancelado e define data de cancelamento)
+   * @param id - ID do agendamento
+   * @returns O agendamento cancelado
+   */
+  const cancelarAgendamento = async (id: number): Promise<Agendamento | null> => {
+    loading.value = true
+    error.value = null
+
+    try {
+      const supabase = useSupabaseClient<any>()
+      
+      const dadosParaCancelar = {
+        cancelado: true,
+        cancelado_as: new Date().toISOString()
+      }
+
+      console.log('🚫 Cancelando agendamento ID:', id)
+
+      const { data, error: updateError } = await supabase
+        .from('ag_agendamentos')
+        .update(dadosParaCancelar)
+        .eq('id', id)
+        .select()
+        .single()
+
+      if (updateError) {
+        throw updateError
+      }
+
+      console.log('✅ Agendamento cancelado com sucesso:', data)
+
+      // Limpar cache do profissional afetado para forçar nova busca
+      if (data.profissional_id) {
+        limparCacheProfissional(data.profissional_id)
+      }
+
+      return data as Agendamento
+    } catch (err: any) {
+      error.value = err.message || 'Erro ao cancelar agendamento'
+      console.error('❌ Erro ao cancelar agendamento:', err)
+      return null
+    } finally {
+      loading.value = false
+    }
+  }
+
   return {
     loading: readonly(loading),
     error: readonly(error),
@@ -220,6 +320,8 @@ export const useAgendamento = () => {
     buscarAgendamentosPorProfissional, // mantido para compatibilidade
     limparCacheProfissional,
     limparTodoCache,
-    inserirAgendamento
+    inserirAgendamento,
+    editarAgendamento,
+    cancelarAgendamento
   }
 }

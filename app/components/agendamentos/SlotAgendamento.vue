@@ -54,6 +54,10 @@ interface Props {
 
 const props = defineProps<Props>()
 
+const emit = defineEmits<{
+  'editar-agendamento': [agendamento: Agendamento]
+}>()
+
 // Constantes para cálculos - CORRIGIDAS para incluir separadores
 const HORA_INICIO = 8 // 8h
 const ALTURA_BLOCO = 96 // h-24 = 96px
@@ -103,8 +107,8 @@ const isAgendamentoMedio = computed(() => duracaoMinutos.value > 45 && duracaoMi
 
 // Função para abrir modal de detalhes
 const abrirDetalhes = () => {
-  // TODO: Implementar modal de detalhes
-  console.log('Abrir detalhes do agendamento:', props.agendamento.titulo)
+  console.log('📝 Emitindo evento editar-agendamento:', props.agendamento)
+  emit('editar-agendamento', props.agendamento)
 }
 
 // Função para gerar cor mais escura a partir de uma cor base

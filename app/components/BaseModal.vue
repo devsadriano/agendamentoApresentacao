@@ -11,11 +11,12 @@
     <!-- Modal container -->
     <div class="flex min-h-full items-center justify-center p-4">
       <div
-        class="relative w-full max-w-md transform overflow-hidden rounded-lg bg-white shadow-xl transition-all sm:max-w-lg"
+        class="relative w-full max-w-md transform rounded-lg bg-white shadow-xl transition-all sm:max-w-lg flex flex-col"
+        style="height: 80vh; max-height: 600px;"
         @click.stop
       >
         <!-- Header -->
-        <div class="px-6 py-4 border-b border-gray-200">
+        <div class="px-6 py-4 border-b border-gray-200 flex-shrink-0">
           <div class="flex items-center justify-between">
             <h3 class="text-lg font-medium text-gray-900">
               {{ title }}
@@ -30,14 +31,14 @@
           </div>
         </div>
         
-        <!-- Content -->
-        <div class="px-6 py-4">
+        <!-- Content (scrollable) -->
+        <div class="px-6 py-4 flex-1 overflow-y-auto">
           <slot />
         </div>
         
         <!-- Footer -->
-        <div class="px-6 py-4 border-t border-gray-200 bg-gray-50">
-          <div class="flex justify-end space-x-3">
+        <div class="px-6 py-4 border-t border-gray-200 bg-gray-50 flex-shrink-0">
+          <div class="flex justify-between items-center">
             <BaseButton
               variant="secondary"
               size="md"

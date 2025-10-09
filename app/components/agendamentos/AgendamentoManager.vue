@@ -21,6 +21,7 @@
           :agendamentos="getAgendamentosDoDia(dia.data)"
           :loading="loadingAgendamentos"
           class="flex-1"
+          @editar-agendamento="abrirModalEditarAgendamento"
         />
       </div>
     </div>
@@ -36,6 +37,16 @@
       :loading-salvar="loadingAgendamento"
       @salvar="handleNovoAgendamento"
     />
+
+    <!-- Modal Editar Agendamento -->
+    <ModalEditarAgendamento
+      v-model="showModalEditarAgendamento"
+      :agendamento="agendamentoSelecionado"
+      :clientes="clientes"
+      :profissional-nome="profissionalAtivo?.nome_profissional || ''"
+      @success="handleEditarAgendamentoSucesso"
+      @cancelado="handleAgendamentoCancelado"
+    />
   </div>
 </template>
 
@@ -45,6 +56,7 @@ import ControladorSemana from './ControladorSemana.vue'
 import ReguaHorarios from './ReguaHorarios.vue'
 import ItemAgendamento from './ItemAgendamento.vue'
 import ModalNovoAgendamento from './ModalNovoAgendamento.vue'
+import ModalEditarAgendamento from '../ModalEditarAgendamento.vue'
 import { useAgendamentoStore } from '../../stores/agendamento'
 import { useProfissionalAtivo } from '../../composables/useProfissionalAtivo'
 import { useAgendamento } from '../../composables/useAgendamento'
@@ -164,6 +176,8 @@ onMounted(() => {
 
 // Estado do modal
 const showModalNovoAgendamento = ref(false)
+const showModalEditarAgendamento = ref(false)
+const agendamentoSelecionado = ref<Agendamento | null>(null)
 
 // Função para lidar com novo agendamento
 const handleNovoAgendamento = async (dadosAgendamento: any) => {
@@ -225,6 +239,25 @@ const handleNovoAgendamento = async (dadosAgendamento: any) => {
 const abrirModalNovoAgendamento = () => {
   console.log('📋 Agendamentos sendo passados para o modal:', todosAgendamentos.value)
   showModalNovoAgendamento.value = true
+}
+
+// Função para abrir modal de edição de agendamento
+const abrirModalEditarAgendamento = (agendamento: Agendamento) => {
+  console.log('📝 Abrindo modal de edição para agendamento:', agendamento)
+  agendamentoSelecionado.value = agendamento
+  showModalEditarAgendamento.value = true
+}
+
+// Função para lidar com sucesso na edição do agendamento
+const handleEditarAgendamentoSucesso = () => {
+  console.log('✅ Agendamento editado com sucesso, recarregando lista')
+  buscarAgendamentosSemana()
+}
+
+// Função para lidar com cancelamento do agendamento
+const handleAgendamentoCancelado = () => {
+  console.log('🚫 Agendamento cancelado, recarregando lista')
+  buscarAgendamentosSemana()
 }
 
 // Componente principal para gerenciar agendamentos

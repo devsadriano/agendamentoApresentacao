@@ -18,6 +18,7 @@
         v-for="agendamento in agendamentos" 
         :key="agendamento.id"
         :agendamento="agendamento"
+        @editar-agendamento="emit('editar-agendamento', $event)"
       />
       
       <!-- Indicador de loading -->
@@ -41,6 +42,10 @@ interface Props {
 const props = withDefaults(defineProps<Props>(), {
   loading: false
 })
+
+const emit = defineEmits<{
+  'editar-agendamento': [agendamento: Agendamento]
+}>()
 
 // Horários disponíveis (deve estar sincronizado com a régua)
 const horarios = computed(() => {
