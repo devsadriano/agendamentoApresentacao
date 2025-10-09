@@ -75,6 +75,7 @@ export interface Agendamento {
   descricao: string | null
   cancelado: boolean | null
   cancelado_as: string | null
+  cor: string | null
 }
 
 // Estado do store de agendamentos

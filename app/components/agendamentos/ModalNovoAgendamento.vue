@@ -201,6 +201,62 @@
           </div>
         </div>
       </div>
+
+      <!-- Cor do Agendamento -->
+      <div>
+        <label class="block text-sm font-medium text-gray-700 mb-3">
+          Cor do Agendamento
+        </label>
+        
+        <!-- Paleta de cores predefinidas -->
+        <div class="grid grid-cols-8 gap-2 mb-3">
+          <button
+            v-for="cor in coresPredefinidas"
+            :key="cor.hex"
+            type="button"
+            class="relative w-8 h-8 rounded-full border-2 transition-all duration-200 hover:scale-110 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+            :class="form.cor === cor.hex ? 'border-gray-400 shadow-lg' : 'border-gray-200'"
+            :style="{ backgroundColor: cor.hex }"
+            :title="cor.nome"
+            @click="selecionarCor(cor.hex)"
+          >
+            <!-- Checkmark quando selecionado -->
+            <div 
+              v-if="form.cor === cor.hex"
+              class="absolute inset-0 flex items-center justify-center"
+            >
+              <svg class="w-4 h-4 text-white drop-shadow-md" fill="currentColor" viewBox="0 0 20 20">
+                <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
+              </svg>
+            </div>
+          </button>
+        </div>
+        
+        <!-- Cor personalizada -->
+        <div class="flex items-center space-x-3">
+          <div class="flex items-center space-x-2">
+            <input
+              v-model="form.cor"
+              type="color"
+              class="w-8 h-8 border border-gray-300 rounded cursor-pointer focus:outline-none focus:ring-2 focus:ring-blue-500"
+              title="Cor personalizada"
+              @input="onCorPersonalizada"
+            />
+            <span class="text-sm text-gray-600">Personalizada</span>
+          </div>
+          <div class="flex items-center space-x-2">
+            <div 
+              class="w-4 h-4 rounded border border-gray-300"
+              :style="{ backgroundColor: form.cor }"
+            ></div>
+            <span class="text-xs font-mono text-gray-500">{{ form.cor.toUpperCase() }}</span>
+          </div>
+        </div>
+        
+        <p class="mt-2 text-xs text-gray-500">
+          Escolha uma cor para identificar visualmente este agendamento
+        </p>
+      </div>
     </div>
   </BaseModal>
 </template>
@@ -226,6 +282,7 @@ interface FormData {
   data: string
   horaInicio: string
   horaFim: string
+  cor: string
 }
 
 const props = defineProps<Props>()
@@ -260,13 +317,45 @@ const form = ref<FormData>({
   descricao: '',
   data: '',
   horaInicio: '',
-  horaFim: ''
+  horaFim: '',
+  cor: '#DBE9FE' // Cor padrão
 })
 
 // Estado do dropdown de clientes
 const pesquisaCliente = ref('')
 const mostrarDropdownClientes = ref(false)
 const clienteSelecionado = ref<Cliente | null>(null)
+
+// Cores predefinidas para seleção rápida
+const coresPredefinidas = [
+  { nome: 'Azul Claro', hex: '#DBE9FE' },
+  { nome: 'Verde Suave', hex: '#D1FAE5' },
+  { nome: 'Rosa Suave', hex: '#FCE7F3' },
+  { nome: 'Amarelo Suave', hex: '#FEF3C7' },
+  { nome: 'Roxo Suave', hex: '#E9D5FF' },
+  { nome: 'Laranja Suave', hex: '#FED7AA' },
+  { nome: 'Vermelho Suave', hex: '#FECACA' },
+  { nome: 'Cinza Suave', hex: '#F3F4F6' },
+  { nome: 'Azul Médio', hex: '#93C5FD' },
+  { nome: 'Verde Médio', hex: '#86EFAC' },
+  { nome: 'Rosa Médio', hex: '#F9A8D4' },
+  { nome: 'Amarelo Médio', hex: '#FDE047' },
+  { nome: 'Roxo Médio', hex: '#C4B5FD' },
+  { nome: 'Laranja Médio', hex: '#FDBA74' },
+  { nome: 'Vermelho Médio', hex: '#F87171' },
+  { nome: 'Teal', hex: '#5EEAD4' }
+]
+
+// Função para selecionar cor predefinida
+const selecionarCor = (cor: string) => {
+  form.value.cor = cor
+}
+
+// Função para lidar com cor personalizada
+const onCorPersonalizada = () => {
+  // A cor já é atualizada automaticamente pelo v-model
+  console.log('Cor personalizada selecionada:', form.value.cor)
+}
 
 // Funções auxiliares para cálculo de conflitos
 const converterHorarioParaMinutos = (horario: string): number => {
@@ -521,7 +610,8 @@ const fecharModal = () => {
     descricao: '',
     data: '',
     horaInicio: '',
-    horaFim: ''
+    horaFim: '',
+    cor: '#DBE9FE' // Cor padrão
   }
   
   // Resetar estado do dropdown de clientes

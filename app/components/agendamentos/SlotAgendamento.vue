@@ -1,16 +1,16 @@
 <template>
   <div 
-    class="absolute left-1 right-1 bg-blue-100 rounded-md p-2 shadow-sm hover:shadow-md transition-shadow cursor-pointer flex items-center justify-center"
-    :style="positionStyle"
+    class="absolute left-1 right-1 rounded-md p-2 shadow-sm hover:shadow-md transition-shadow cursor-pointer flex items-center justify-center"
+    :style="slotStyle"
     @click="abrirDetalhes"
   >
     <!-- Layout para agendamentos curtos (≤ 45min) -->
     <div v-if="isAgendamentoCurto" class="text-center">
       <!-- Apenas horário e título em linha única -->
-      <div class="text-xs font-medium text-blue-700 truncate">
+      <div class="text-xs font-medium truncate" :style="textColorStyle">
         {{ horarioFormatado }}
       </div>
-      <div class="text-sm font-semibold text-blue-900 truncate leading-tight">
+      <div class="text-sm font-semibold truncate leading-tight" :style="titleColorStyle">
         {{ agendamento.titulo }}
       </div>
     </div>
@@ -18,11 +18,11 @@
     <!-- Layout para agendamentos médios (45min - 90min) -->
     <div v-else-if="isAgendamentoMedio" class="text-center">
       <!-- Horário -->
-      <div class="text-xs font-medium text-blue-700 mb-1">
+      <div class="text-xs font-medium mb-1" :style="textColorStyle">
         {{ horarioFormatado }}
       </div>
       <!-- Título -->
-      <div class="text-sm font-semibold text-blue-900 leading-tight">
+      <div class="text-sm font-semibold leading-tight" :style="titleColorStyle">
         {{ agendamento.titulo }}
       </div>
     </div>
@@ -30,15 +30,15 @@
     <!-- Layout para agendamentos longos (> 90min) -->
     <div v-else class="text-center">
       <!-- Horário -->
-      <div class="text-xs font-medium text-blue-700 mb-1">
+      <div class="text-xs font-medium mb-1" :style="textColorStyle">
         {{ horarioFormatado }}
       </div>
       <!-- Título -->
-      <div class="text-sm font-semibold text-blue-900 mb-1 leading-tight">
+      <div class="text-sm font-semibold mb-1 leading-tight" :style="titleColorStyle">
         {{ agendamento.titulo }}
       </div>
       <!-- Descrição -->
-      <div class="text-xs text-blue-600 truncate">
+      <div class="text-xs truncate" :style="descriptionColorStyle">
         {{ agendamento.descricao }}
       </div>
     </div>
@@ -106,6 +106,64 @@ const abrirDetalhes = () => {
   // TODO: Implementar modal de detalhes
   console.log('Abrir detalhes do agendamento:', props.agendamento.titulo)
 }
+
+// Função para gerar cor mais escura a partir de uma cor base
+const gerarCorEscura = (corBase: string, fator: number = 0.3): string => {
+  // Remove o # se existir
+  const cor = corBase.replace('#', '')
+  
+  // Converte para RGB
+  const r = parseInt(cor.substr(0, 2), 16)
+  const g = parseInt(cor.substr(2, 2), 16)
+  const b = parseInt(cor.substr(4, 2), 16)
+  
+  // Aplica o fator de escurecimento
+  const novoR = Math.round(r * (1 - fator))
+  const novoG = Math.round(g * (1 - fator))
+  const novoB = Math.round(b * (1 - fator))
+  
+  // Converte de volta para hex
+  return `#${novoR.toString(16).padStart(2, '0')}${novoG.toString(16).padStart(2, '0')}${novoB.toString(16).padStart(2, '0')}`
+}
+
+// Computed para cor de fundo do agendamento
+const corFundo = computed(() => {
+  return props.agendamento.cor || '#DBE9FE' // Cor padrão se não estiver definida
+})
+
+// Computed para cor do texto (mais escura que o fundo)
+const corTexto = computed(() => {
+  return gerarCorEscura(corFundo.value, 0.6)
+})
+
+// Computed para cor do título (ainda mais escura)
+const corTitulo = computed(() => {
+  return gerarCorEscura(corFundo.value, 0.8)
+})
+
+// Computed para estilo completo do slot incluindo posição e cor
+const slotStyle = computed(() => {
+  const posicao = positionStyle.value
+  return {
+    ...posicao,
+    backgroundColor: corFundo.value,
+  }
+})
+
+// Computed para estilo do texto
+const textColorStyle = computed(() => ({
+  color: corTexto.value
+}))
+
+// Computed para estilo do título
+const titleColorStyle = computed(() => ({
+  color: corTitulo.value
+}))
+
+// Computed para estilo da descrição
+const descriptionColorStyle = computed(() => ({
+  color: corTexto.value
+}))
 
 // Computed para calcular posição e tamanho CORRIGIDO com proporção de minutos
 const positionStyle = computed(() => {
