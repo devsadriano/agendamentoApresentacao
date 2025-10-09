@@ -4,7 +4,7 @@
     title="Novo Agendamento"
     confirm-text="Salvar"
     cancel-text="Cancelar"
-    :loading="loading"
+    :loading="loading || props.loadingSalvar"
     @confirm="salvarAgendamento"
     @close="fecharModal"
   >
@@ -273,6 +273,7 @@ interface Props {
   clientes: Cliente[]
   carregandoClientes?: boolean
   agendamentosExistentes: Agendamento[]
+  loadingSalvar?: boolean
 }
 
 interface FormData {
@@ -598,7 +599,50 @@ const onHoraInicioChange = () => {
 }
 
 const salvarAgendamento = () => {
-  // TODO: Validações
+  console.log('🔍 Validando dados do formulário:', form.value)
+  
+  // Validações obrigatórias
+  if (!form.value.clienteId) {
+    console.error('❌ Cliente não selecionado')
+    alert('Por favor, selecione um cliente')
+    return
+  }
+  
+  if (!form.value.titulo.trim()) {
+    console.error('❌ Título não preenchido')
+    alert('Por favor, preencha o título do agendamento')
+    return
+  }
+  
+  if (!form.value.data) {
+    console.error('❌ Data não selecionada')
+    alert('Por favor, selecione uma data')
+    return
+  }
+  
+  if (!form.value.horaInicio) {
+    console.error('❌ Hora de início não selecionada')
+    alert('Por favor, selecione a hora de início')
+    return
+  }
+  
+  if (!form.value.horaFim) {
+    console.error('❌ Hora de fim não selecionada')
+    alert('Por favor, selecione a hora de fim')
+    return
+  }
+  
+  // Validar se hora fim é maior que hora início
+  const horaInicioMinutos = converterHorarioParaMinutos(form.value.horaInicio)
+  const horaFimMinutos = converterHorarioParaMinutos(form.value.horaFim)
+  
+  if (horaFimMinutos <= horaInicioMinutos) {
+    console.error('❌ Hora de fim deve ser maior que hora de início')
+    alert('A hora de fim deve ser maior que a hora de início')
+    return
+  }
+  
+  console.log('✅ Todas as validações passaram, enviando dados:', form.value)
   emit('salvar', form.value)
 }
 

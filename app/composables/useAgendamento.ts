@@ -127,12 +127,99 @@ export const useAgendamento = () => {
     console.log('🗑️ Todo cache limpo')
   }
 
+  /**
+   * Converte horário para formato GMT-3 (Brasil)
+   */
+  const converterHorarioParaGMT3 = (hora: string): string => {
+    // Adicionar segundos se não estiver presente
+    let horarioCompleto = hora
+    if (hora.split(':').length === 2) {
+      horarioCompleto = `${hora}:00`
+    }
+    
+    // Adicionar timezone GMT-3
+    const horarioGMT3 = `${horarioCompleto}-03:00`
+    console.log('🕒 Convertendo:', hora, '→', horarioGMT3)
+    
+    return horarioGMT3
+  }
+
+  /**
+   * Insere um novo agendamento no banco de dados
+   * @param agendamento - Dados do agendamento a ser inserido
+   * @returns O agendamento criado com ID gerado pelo Supabase
+   */
+  const inserirAgendamento = async (agendamento: {
+    profissional_id: number
+    cliente_id: number
+    data: string
+    hora_inicio: string
+    hora_fim: string
+    titulo: string
+    descricao?: string
+    cor?: string
+  }): Promise<Agendamento | null> => {
+    loading.value = true
+    error.value = null
+
+    try {
+      const supabase = useSupabaseClient<any>()
+      
+      // Converter horários para GMT-3
+      const horaInicioGMT3 = converterHorarioParaGMT3(agendamento.hora_inicio)
+      const horaFimGMT3 = converterHorarioParaGMT3(agendamento.hora_fim)
+      
+      // Dados para inserção (user_id será inserido automaticamente pelo RLS)
+      const dadosParaInserir = {
+        profissional_id: agendamento.profissional_id,
+        cliente_id: agendamento.cliente_id,
+        data: agendamento.data,
+        hora_inicio: horaInicioGMT3,
+        hora_fim: horaFimGMT3,
+        titulo: agendamento.titulo,
+        descricao: agendamento.descricao || null,
+        cor: agendamento.cor || '#DBE9FE',
+        cancelado: false
+      }
+
+      console.log('📝 Inserindo agendamento com horários GMT-3:', dadosParaInserir)
+      console.log('🕐 Horário original início:', agendamento.hora_inicio)
+      console.log('🕐 Horário original fim:', agendamento.hora_fim)
+      console.log('🌍 Horário GMT-3 início:', horaInicioGMT3)
+      console.log('🌍 Horário GMT-3 fim:', horaFimGMT3)
+
+      const { data, error: insertError } = await supabase
+        .from('ag_agendamentos')
+        .insert(dadosParaInserir)
+        .select()
+        .single()
+
+      if (insertError) {
+        throw insertError
+      }
+
+      console.log('✅ Agendamento inserido com sucesso:', data)
+
+      // Limpar cache do profissional afetado para forçar nova busca
+      limparCacheProfissional(agendamento.profissional_id)
+
+      return data as Agendamento
+    } catch (err: any) {
+      error.value = err.message || 'Erro ao inserir agendamento'
+      console.error('❌ Erro ao inserir agendamento:', err)
+      return null
+    } finally {
+      loading.value = false
+    }
+  }
+
   return {
     loading: readonly(loading),
     error: readonly(error),
     buscarAgendamentosPorProfissionalEPeriodo,
     buscarAgendamentosPorProfissional, // mantido para compatibilidade
     limparCacheProfissional,
-    limparTodoCache
+    limparTodoCache,
+    inserirAgendamento
   }
 }

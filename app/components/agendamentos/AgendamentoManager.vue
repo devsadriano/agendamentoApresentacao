@@ -33,6 +33,7 @@
       :clientes="clientes"
       :carregando-clientes="carregandoClientes"
       :agendamentos-existentes="todosAgendamentos"
+      :loading-salvar="loadingAgendamento"
       @salvar="handleNovoAgendamento"
     />
   </div>
@@ -48,6 +49,7 @@ import { useAgendamentoStore } from '../../stores/agendamento'
 import { useProfissionalAtivo } from '../../composables/useProfissionalAtivo'
 import { useAgendamento } from '../../composables/useAgendamento'
 import { useProfissionais } from '../../composables/useProfissionais'
+import { useNotification } from '../../composables/useNotification'
 import type { Agendamento, Cliente } from '../../../shared/types/database'
 
 // Acessar o store de agendamentos
@@ -68,6 +70,9 @@ const todosAgendamentos = ref<Agendamento[]>([])
 // Estado reativo para clientes
 const clientes = ref<Cliente[]>([])
 const carregandoClientes = ref(false)
+
+// Estado reativo para loading de inserção de agendamento
+const loadingAgendamento = ref(false)
 
 /**
  * Calcula as datas de início e fim da semana atual
@@ -161,13 +166,59 @@ onMounted(() => {
 const showModalNovoAgendamento = ref(false)
 
 // Função para lidar com novo agendamento
-const handleNovoAgendamento = (dadosAgendamento: any) => {
-  console.log('Novo agendamento:', dadosAgendamento)
-  // TODO: Implementar lógica de criação do agendamento
-  showModalNovoAgendamento.value = false
+const handleNovoAgendamento = async (dadosAgendamento: any) => {
+  console.log('📝 Tentando criar novo agendamento:', dadosAgendamento)
   
-  // Recarregar agendamentos após criação
-  buscarAgendamentosSemana()
+  // Validar se há profissional ativo
+  if (!profissionalAtivo.value) {
+    console.error('❌ Nenhum profissional ativo selecionado')
+    const { showError } = useNotification()
+    showError('Nenhum profissional ativo selecionado')
+    return
+  }
+
+  loadingAgendamento.value = true
+
+  try {
+    // Usar o composable para inserir o agendamento
+    const { inserirAgendamento, error } = useAgendamento()
+    const { showSuccess, showError } = useNotification()
+    
+    const novoAgendamento = await inserirAgendamento({
+      profissional_id: profissionalAtivo.value.profissional_id,
+      cliente_id: parseInt(dadosAgendamento.clienteId),
+      data: dadosAgendamento.data,
+      hora_inicio: dadosAgendamento.horaInicio,
+      hora_fim: dadosAgendamento.horaFim,
+      titulo: dadosAgendamento.titulo,
+      descricao: dadosAgendamento.descricao,
+      cor: dadosAgendamento.cor
+    })
+
+    if (novoAgendamento) {
+      console.log('✅ Agendamento criado com sucesso:', novoAgendamento)
+      showSuccess(`Agendamento "${dadosAgendamento.titulo}" criado com sucesso!`)
+      showModalNovoAgendamento.value = false
+      
+      // Recarregar agendamentos após criação
+      buscarAgendamentosSemana()
+    } else {
+      console.error('❌ Falha ao criar agendamento')
+      
+      // Verificar se há erro específico
+      if (error.value) {
+        showError(`Erro ao criar agendamento: ${error.value}`)
+      } else {
+        showError('Falha ao criar agendamento. Tente novamente.')
+      }
+    }
+  } catch (error: any) {
+    console.error('❌ Erro ao criar agendamento:', error)
+    const { showError } = useNotification()
+    showError(`Erro inesperado: ${error.message || 'Tente novamente'}`)
+  } finally {
+    loadingAgendamento.value = false
+  }
 }
 
 // Função para abrir modal (com logs para debug)
