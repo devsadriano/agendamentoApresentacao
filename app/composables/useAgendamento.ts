@@ -1,4 +1,4 @@
-import type { Agendamento } from '../../shared/types/database'
+import type { Agendamento, AgendamentoCompleto } from '../../shared/types/database'
 
 // Cache global de agendamentos por profissional e período
 type CacheKey = string // formato: "profissional_id:YYYY-MM-DD:YYYY-MM-DD"
@@ -313,6 +313,99 @@ export const useAgendamento = () => {
     }
   }
 
+  /**
+   * Busca relatório completo de agendamentos com informações de cliente e profissional
+   * @param filtros - Filtros opcionais para a busca
+   * @returns Lista de agendamentos completos
+   */
+  const buscarRelatorioAgendamentos = async (filtros?: {
+    profissionalId?: number
+    clienteId?: number
+    dataInicio?: string
+    dataFim?: string
+    incluirCancelados?: boolean
+  }): Promise<AgendamentoCompleto[]> => {
+    loading.value = true
+    error.value = null
+
+    try {
+      const supabase = useSupabaseClient<any>()
+      
+      console.log('📊 Buscando relatório de agendamentos via RPC com filtros:', filtros)
+
+      // Usar RPC function para buscar agendamentos completos
+      const { data, error: fetchError } = await supabase
+        .rpc('ag_get_agendamentos_completos')
+
+      if (fetchError) {
+        throw fetchError
+      }
+
+      let agendamentos = data || []
+
+      // Aplicar filtros localmente se fornecidos
+      if (filtros) {
+        if (filtros.profissionalId) {
+          agendamentos = agendamentos.filter((ag: AgendamentoCompleto) => 
+            ag.profissional_id === filtros.profissionalId
+          )
+        }
+        
+        if (filtros.clienteId) {
+          agendamentos = agendamentos.filter((ag: AgendamentoCompleto) => 
+            ag.cliente_id === filtros.clienteId
+          )
+        }
+        
+        if (filtros.dataInicio) {
+          agendamentos = agendamentos.filter((ag: AgendamentoCompleto) => 
+            ag.data && ag.data >= filtros.dataInicio!
+          )
+        }
+        
+        if (filtros.dataFim) {
+          agendamentos = agendamentos.filter((ag: AgendamentoCompleto) => 
+            ag.data && ag.data <= filtros.dataFim!
+          )
+        }
+        
+        // Por padrão, não incluir cancelados
+        if (!filtros.incluirCancelados) {
+          agendamentos = agendamentos.filter((ag: AgendamentoCompleto) => 
+            !ag.cancelado
+          )
+        }
+      } else {
+        // Se nenhum filtro fornecido, não incluir cancelados por padrão
+        agendamentos = agendamentos.filter((ag: AgendamentoCompleto) => 
+          !ag.cancelado
+        )
+      }
+
+      // Ordenar por data e hora
+      agendamentos.sort((a: AgendamentoCompleto, b: AgendamentoCompleto) => {
+        // Verificar se as datas existem
+        if (!a.data || !b.data) return 0
+        if (a.data !== b.data) {
+          return a.data.localeCompare(b.data)
+        }
+        // Verificar se os horários existem
+        if (!a.hora_inicio || !b.hora_inicio) return 0
+        return a.hora_inicio.localeCompare(b.hora_inicio)
+      })
+
+      console.log('📈 Relatório carregado:', `${agendamentos.length} agendamentos encontrados`)
+
+      return agendamentos as AgendamentoCompleto[]
+    } catch (err: any) {
+      error.value = err.message || 'Erro ao buscar relatório de agendamentos'
+      console.error('❌ Erro ao buscar relatório de agendamentos:', err)
+      return []
+    } finally {
+      loading.value = false
+    }
+  }
+
   return {
     loading: readonly(loading),
     error: readonly(error),
@@ -322,6 +415,7 @@ export const useAgendamento = () => {
     limparTodoCache,
     inserirAgendamento,
     editarAgendamento,
-    cancelarAgendamento
+    cancelarAgendamento,
+    buscarRelatorioAgendamentos
   }
 }

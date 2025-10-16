@@ -84,3 +84,28 @@ export interface AgendamentoState {
   loading: boolean
   error: string | null
 }
+
+// Tipos para relatório completo de agendamentos baseado na view ag_view_agendamentos_completos
+export interface AgendamentoCompleto {
+  agendamento_id: number
+  created_at: string
+  user_id: string | null
+  profissional_id: number | null
+  cliente_id: number | null
+  data: string | null
+  hora_inicio: string | null
+  hora_fim: string | null
+  titulo: string | null
+  descricao: string | null
+  cancelado: boolean | null
+  cancelado_as: string | null
+  cor: string | null
+  nome_cliente: string | null
+  cpf_cliente: string | null
+  email_cliente: string | null
+  telefone_cliente: string | null
+  nome_profissional: string | null
+  especialidade_profissional: string | null
+  especialidade_id: number | null
+  profile_profissional_id: number | null
+}
