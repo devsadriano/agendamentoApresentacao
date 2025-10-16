@@ -21,13 +21,13 @@
             <div class="flex-shrink-0">
               <div class="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center">
                 <span class="text-sm font-medium text-blue-600">
-                  {{ profissionalNome?.charAt(0).toUpperCase() || 'P' }}
+                  {{ nomeProfissionalAtual?.charAt(0).toUpperCase() || 'P' }}
                 </span>
               </div>
             </div>
             <div>
               <div class="text-sm font-medium text-gray-900">
-                {{ profissionalNome || 'N/A' }}
+                {{ nomeProfissionalAtual || 'Carregando...' }}
               </div>
               <div class="text-xs text-gray-500">
                 Profissional
@@ -230,6 +230,7 @@
 
 <script setup lang="ts">
 import type { Agendamento, Cliente } from '../../shared/types/database'
+import { useProfissionais } from '../composables/useProfissionais'
 
 interface Props {
   modelValue: boolean
@@ -253,6 +254,10 @@ const emit = defineEmits<{
 // Composables
 const { editarAgendamento, cancelarAgendamento } = useAgendamento()
 const { showSuccess, showError } = useNotification()
+const { buscarProfissionais } = useProfissionais()
+
+// Estado reativo para o nome do profissional atual
+const nomeProfissionalAtual = ref('')
 
 // Estados reativos
 const loading = ref(false)
@@ -457,6 +462,23 @@ const loadAgendamento = () => {
   form.value.cor = props.agendamento.cor || '#DBE9FE'
 }
 
+// Carregar nome do profissional baseado no profissional_id do agendamento
+const carregarNomeProfissional = async () => {
+  if (!props.agendamento?.profissional_id) {
+    nomeProfissionalAtual.value = ''
+    return
+  }
+
+  try {
+    const profissionais = await buscarProfissionais()
+    const profissional = profissionais.find(p => p.profissional_id === props.agendamento?.profissional_id)
+    nomeProfissionalAtual.value = profissional?.nome_profissional || 'Profissional não encontrado'
+  } catch (error) {
+    console.error('Erro ao carregar nome do profissional:', error)
+    nomeProfissionalAtual.value = 'Erro ao carregar'
+  }
+}
+
 // Watchers
 watch(
   () => props.modelValue,
@@ -465,7 +487,18 @@ watch(
       resetForm()
       if (props.agendamento) {
         loadAgendamento()
+        carregarNomeProfissional()
       }
+    }
+  }
+)
+
+// Observar mudanças no profissional_id do agendamento
+watch(
+  () => props.agendamento?.profissional_id,
+  (newProfissionalId, oldProfissionalId) => {
+    if (newProfissionalId !== oldProfissionalId && props.modelValue) {
+      carregarNomeProfissional()
     }
   }
 )

@@ -33,7 +33,7 @@
 
       <!-- Centro: Profissional Ativo (ocupa espaço restante) -->
       <div class="flex-1 flex justify-center">
-        <ProfissionalAtivo />
+        <ProfissionalAtivo @abrir-selecao="emit('abrir-selecao-profissional')" />
       </div>
 
       <!-- Lado direito: Botão Novo (largura fixa igual ao esquerdo) -->
@@ -62,7 +62,10 @@ import ProfissionalAtivo from './ProfissionalAtivo.vue'
 import ListaDias from './ListaDias.vue'
 
 // Definir emits
-const emit = defineEmits(['novoAgendamento'])
+const emit = defineEmits<{
+  'novoAgendamento': []
+  'abrir-selecao-profissional': []
+}>()
 
 // Acessar o store de agendamentos
 const agendamentoStore = useAgendamentoStore()

@@ -3,7 +3,10 @@
     <!-- Header - Agendamentos (altura automática) -->
     <div class="flex items-center">
       <!-- Card único com todos os componentes -->
-      <ControladorSemana @novo-agendamento="abrirModalNovoAgendamento" />
+      <ControladorSemana 
+        @novo-agendamento="abrirModalNovoAgendamento" 
+        @abrir-selecao-profissional="abrirModalSelecionarProfissional" 
+      />
     </div>
 
     <!-- Corpo - Conteúdo Principal (ocupa todo o espaço restante) -->
@@ -47,6 +50,12 @@
       @success="handleEditarAgendamentoSucesso"
       @cancelado="handleAgendamentoCancelado"
     />
+
+    <!-- Modal Selecionar Profissional -->
+    <ModalSelecionarProfissional
+      v-model="showModalSelecionarProfissional"
+      @profissional-selecionado="handleProfissionalSelecionado"
+    />
   </div>
 </template>
 
@@ -57,6 +66,7 @@ import ReguaHorarios from './ReguaHorarios.vue'
 import ItemAgendamento from './ItemAgendamento.vue'
 import ModalNovoAgendamento from './ModalNovoAgendamento.vue'
 import ModalEditarAgendamento from '../ModalEditarAgendamento.vue'
+import ModalSelecionarProfissional from './ModalSelecionarProfissional.vue'
 import { useAgendamentoStore } from '../../stores/agendamento'
 import { useProfissionalAtivo } from '../../composables/useProfissionalAtivo'
 import { useAgendamento } from '../../composables/useAgendamento'
@@ -177,6 +187,7 @@ onMounted(() => {
 // Estado do modal
 const showModalNovoAgendamento = ref(false)
 const showModalEditarAgendamento = ref(false)
+const showModalSelecionarProfissional = ref(false)
 const agendamentoSelecionado = ref<Agendamento | null>(null)
 
 // Função para lidar com novo agendamento
@@ -246,6 +257,19 @@ const abrirModalEditarAgendamento = (agendamento: Agendamento) => {
   console.log('📝 Abrindo modal de edição para agendamento:', agendamento)
   agendamentoSelecionado.value = agendamento
   showModalEditarAgendamento.value = true
+}
+
+// Função para abrir modal de seleção de profissional
+const abrirModalSelecionarProfissional = () => {
+  console.log('👤 Abrindo modal de seleção de profissional')
+  showModalSelecionarProfissional.value = true
+}
+
+// Função para lidar com seleção de profissional
+const handleProfissionalSelecionado = (profissional: any) => {
+  console.log('✅ Profissional selecionado:', profissional)
+  // A lógica de definição já é feita no modal através do composable
+  // Aqui podemos adicionar logs ou outras ações se necessário
 }
 
 // Função para lidar com sucesso na edição do agendamento
