@@ -55,10 +55,13 @@ const emit = defineEmits<{
 const { logout, isLoading } = useAuth()
 
 // Função para lidar com clique no perfil
-const handleProfileClick = () => {
-  // TODO: Implementar navegação para perfil
-  console.log('Perfil clicado - ainda não implementado')
-  emit('close')
+const handleProfileClick = async () => {
+  try {
+    await navigateTo('/perfil')
+    emit('close')
+  } catch (error) {
+    console.error('Erro ao navegar para perfil:', error)
+  }
 }
 
 // Função para fazer logout

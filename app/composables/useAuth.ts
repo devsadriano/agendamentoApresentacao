@@ -99,6 +99,63 @@ export const useAuth = () => {
   }
   
   /**
+   * Altera a senha do usuário
+   */
+  const updatePassword = async (newPassword: string): Promise<AuthResult> => {
+    try {
+      isLoading.value = true
+      
+      // Verifica se o usuário está autenticado
+      if (!user.value) {
+        const authError: AuthError = {
+          message: 'Usuário não autenticado',
+          code: 'USER_NOT_AUTHENTICATED'
+        }
+        
+        showError('Você precisa estar logado para alterar a senha')
+        
+        return { success: false, error: authError }
+      }
+      
+      const { data, error } = await supabase.auth.updateUser({
+        password: newPassword
+      })
+      
+      if (error) {
+        const authError: AuthError = {
+          message: error.message,
+          code: error.message
+        }
+        
+        // Exibe toast de erro
+        showError('Erro ao alterar senha: ' + error.message)
+        
+        return { success: false, error: authError }
+      }
+      
+      if (data.user) {
+        // Toast de sucesso
+        showSuccess('Senha alterada com sucesso!')
+        
+        return { success: true }
+      }
+      
+      return { success: false, error: { message: 'Erro desconhecido ao alterar senha' } }
+      
+    } catch (error) {
+      const authError: AuthError = {
+        message: error instanceof Error ? error.message : 'Erro desconhecido'
+      }
+      
+      showError('Erro inesperado ao alterar senha')
+      
+      return { success: false, error: authError }
+    } finally {
+      isLoading.value = false
+    }
+  }
+
+  /**
    * Verifica se o usuário está autenticado
    */
   const isAuthenticated = computed(() => !!user.value)
@@ -117,5 +174,6 @@ export const useAuth = () => {
     // Ações
     login,
     logout,
+    updatePassword,
   }
 }
