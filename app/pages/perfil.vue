@@ -82,6 +82,7 @@ import ChangePassword from '~/components/ChangePassword.vue'
 
 // Composables
 const { showSuccess, showError } = useNotification()
+const { updateUserName, isLoading: authLoading } = useAuth()
 const userStore = useUserStore()
 
 // Estado do formulário de perfil
@@ -96,8 +97,8 @@ const originalProfile = ref({
   email: ''
 })
 
-// Estado de loading
-const loadingProfile = ref(false)
+// Estado de loading (usa o loading do composable useAuth)
+const loadingProfile = computed(() => authLoading.value)
 
 // Erros do formulário
 const profileErrors = ref({
@@ -154,26 +155,20 @@ const handleSubmitProfile = async () => {
     return
   }
 
-  loadingProfile.value = true
-
   try {
-    await userStore.updateProfile({
-      nome: profileForm.value.nome.trim()
-    })
-
-    if (userStore.hasError) {
-      throw new Error(userStore.error || 'Erro ao atualizar perfil')
-    }
-
-    // Atualizar o perfil original
-    originalProfile.value.nome = profileForm.value.nome
+    const result = await updateUserName(profileForm.value.nome.trim())
     
-    showSuccess('Perfil atualizado com sucesso!')
+    if (result.success) {
+      // Atualizar o perfil original
+      originalProfile.value.nome = profileForm.value.nome
+      
+      // Atualizar o store local para refletir a mudança
+      await userStore.fetchProfile()
+    }
+    // O composable useAuth já cuida de mostrar os toasts de sucesso/erro
   } catch (error: any) {
     console.error('Erro ao atualizar perfil:', error)
-    showError(error.message || 'Erro ao atualizar perfil')
-  } finally {
-    loadingProfile.value = false
+    showError(error.message || 'Erro inesperado ao atualizar perfil')
   }
 }
 

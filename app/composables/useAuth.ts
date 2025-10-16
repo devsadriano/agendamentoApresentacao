@@ -156,6 +156,61 @@ export const useAuth = () => {
   }
 
   /**
+   * Atualiza o nome do usuário
+   */
+  const updateUserName = async (novoNome: string): Promise<AuthResult> => {
+    try {
+      isLoading.value = true
+      
+      // Verifica se o usuário está autenticado
+      if (!user.value) {
+        const authError: AuthError = {
+          message: 'Usuário não autenticado',
+          code: 'USER_NOT_AUTHENTICATED'
+        }
+        
+        showError('Você precisa estar logado para alterar o nome')
+        
+        return { success: false, error: authError }
+      }
+      
+      // @ts-ignore - RPC call para atualizar nome
+      const { data, error } = await supabase.rpc('ag_update_nome_profile', {
+        novo_nome: novoNome
+      })
+      
+      if (error) {
+        const authError: AuthError = {
+          message: error.message,
+          code: error.message
+        }
+        
+        // Exibe toast de erro
+        showError('Erro ao alterar nome: ' + error.message)
+        
+        return { success: false, error: authError }
+      }
+      
+      // Assumindo sucesso se não há erro (a RPC foi executada com sucesso)
+      // Toast de sucesso
+      showSuccess('Nome alterado com sucesso!')
+      
+      return { success: true }
+      
+    } catch (error) {
+      const authError: AuthError = {
+        message: error instanceof Error ? error.message : 'Erro desconhecido'
+      }
+      
+      showError('Erro inesperado ao alterar nome')
+      
+      return { success: false, error: authError }
+    } finally {
+      isLoading.value = false
+    }
+  }
+
+  /**
    * Verifica se o usuário está autenticado
    */
   const isAuthenticated = computed(() => !!user.value)
@@ -175,5 +230,6 @@ export const useAuth = () => {
     login,
     logout,
     updatePassword,
+    updateUserName,
   }
 }
