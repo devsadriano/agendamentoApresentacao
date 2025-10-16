@@ -7,10 +7,6 @@
     
     <!-- Área de conteúdo -->
     <div class="p-6">
-      <div class="mb-6">
-        <p class="text-gray-600">Relatório completo de todos os agendamentos</p>
-      </div>
-
       <!-- Tabela de Cards dos Agendamentos -->
       <TabelaAgendamentos 
         :agendamentos="agendamentos"

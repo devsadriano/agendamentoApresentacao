@@ -369,29 +369,27 @@ export const useAgendamento = () => {
           )
         }
         
-        // Por padrão, não incluir cancelados
-        if (!filtros.incluirCancelados) {
+        // Aplicar filtro de cancelados apenas se especificado
+        if (filtros.incluirCancelados === false) {
           agendamentos = agendamentos.filter((ag: AgendamentoCompleto) => 
             !ag.cancelado
           )
         }
-      } else {
-        // Se nenhum filtro fornecido, não incluir cancelados por padrão
-        agendamentos = agendamentos.filter((ag: AgendamentoCompleto) => 
-          !ag.cancelado
-        )
+        // Se incluirCancelados for true ou undefined, mostrar todos
       }
+      // Se nenhum filtro fornecido, mostrar TODOS os agendamentos (incluindo cancelados)
 
-      // Ordenar por data e hora
+      // Ordenar por data mais recente primeiro, depois por horário mais recente
       agendamentos.sort((a: AgendamentoCompleto, b: AgendamentoCompleto) => {
         // Verificar se as datas existem
         if (!a.data || !b.data) return 0
         if (a.data !== b.data) {
-          return a.data.localeCompare(b.data)
+          // Ordenação decrescente (mais recente primeiro)
+          return b.data.localeCompare(a.data)
         }
-        // Verificar se os horários existem
+        // Verificar se os horários existem - para a mesma data, mais recente primeiro
         if (!a.hora_inicio || !b.hora_inicio) return 0
-        return a.hora_inicio.localeCompare(b.hora_inicio)
+        return b.hora_inicio.localeCompare(a.hora_inicio)
       })
 
       console.log('📈 Relatório carregado:', `${agendamentos.length} agendamentos encontrados`)

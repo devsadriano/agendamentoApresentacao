@@ -31,64 +31,74 @@
       <div
         v-for="agendamento in agendamentos"
         :key="agendamento.agendamento_id"
-        class="px-6 py-4 hover:bg-gray-50 transition-colors duration-150"
+        class="px-4 py-5 hover:bg-gray-50 transition-colors duration-150"
       >
-        <div class="flex items-center space-x-4">
-          <!-- Barra colorida lateral -->
-          <div 
-            class="w-1 h-16 rounded-full"
-            :style="{ backgroundColor: agendamento.cor || '#DBE9FE' }"
-          ></div>
-
-          <!-- Data e Horário -->
-          <div class="flex-shrink-0 w-32">
-            <div class="text-sm font-medium text-gray-900">
-              {{ formatarDataAbreviada(agendamento.data) }}
-            </div>
-            <div class="text-sm text-gray-500">
-              {{ formatarHorario(agendamento.hora_inicio) }} - {{ formatarHorario(agendamento.hora_fim) }}
+        <div class="grid grid-cols-12 gap-3 items-center">
+          <!-- ID -->
+          <div class="col-span-1 text-center">
+            <div class="text-sm font-bold text-gray-700">
+              #{{ agendamento.agendamento_id }}
             </div>
           </div>
 
-          <!-- Título e Descrição -->
-          <div class="flex-1 min-w-0">
-            <div class="text-base font-medium text-gray-900 truncate">
+          <!-- Barra + Status -->
+          <div class="col-span-1 flex items-center space-x-2">
+            <div 
+              class="w-1 h-8 rounded-full"
+              :style="{ backgroundColor: agendamento.cor || '#DBE9FE' }"
+            ></div>
+            <div v-if="agendamento.cancelado" class="inline-flex items-center px-1 py-0.5 text-xs font-medium bg-red-100 text-red-700 rounded">
+              Cancelado
+            </div>
+            <div v-else class="inline-flex items-center px-1 py-0.5 text-xs font-medium bg-green-100 text-green-700 rounded">
+              Ativo
+            </div>
+          </div>
+
+          <!-- Data e Horário -->
+          <div class="col-span-2">
+            <div class="flex items-center space-x-1 text-sm font-medium text-gray-900">
+              <CalendarIcon class="h-4 w-4 text-gray-500" />
+              <span>{{ formatarDataSegura(agendamento.data) }}</span>
+            </div>
+            <div class="text-xs text-gray-500">
+              {{ formatarHorarioSeguro(agendamento.hora_inicio) }} - {{ formatarHorarioSeguro(agendamento.hora_fim) }}
+            </div>
+          </div>
+
+          <!-- Título -->
+          <div class="col-span-2">
+            <div class="text-sm font-medium text-gray-900 truncate">
               {{ agendamento.titulo || 'Sem título' }}
             </div>
-            <div class="text-sm text-gray-500 truncate">
+            <div class="text-xs text-gray-500 truncate">
               {{ agendamento.descricao || 'Sem descrição' }}
             </div>
           </div>
 
           <!-- Cliente -->
-          <div class="flex items-center space-x-3 w-48">
-            <div class="flex-shrink-0">
-              <div class="w-8 h-8 bg-gray-100 rounded-full flex items-center justify-center">
-                <UserIcon class="h-4 w-4 text-gray-500" />
-              </div>
-            </div>
-            <div class="min-w-0 flex-1">
-              <div class="text-sm font-medium text-gray-900 truncate">
+          <div class="col-span-2 flex items-center space-x-2">
+            <UserIcon class="h-4 w-4 text-gray-500" />
+            <div class="min-w-0">
+              <div class="text-xs font-medium text-gray-900 truncate">
                 {{ agendamento.nome_cliente || 'Cliente não informado' }}
               </div>
               <div class="text-xs text-gray-500 truncate">
-                {{ agendamento.telefone_cliente || agendamento.email_cliente || '--' }}
+                {{ agendamento.cpf_cliente || agendamento.telefone_cliente || '--' }}
               </div>
             </div>
           </div>
 
           <!-- Profissional -->
-          <div class="flex items-center space-x-3 w-48">
-            <div class="flex-shrink-0">
-              <div 
-                class="w-8 h-8 rounded-full flex items-center justify-center text-white text-sm font-medium"
-                :style="{ backgroundColor: getCorProfissional(agendamento.nome_profissional) }"
-              >
-                {{ agendamento.nome_profissional?.charAt(0).toUpperCase() || 'P' }}
-              </div>
+          <div class="col-span-2 flex items-center space-x-2">
+            <div 
+              class="w-6 h-6 rounded-full flex items-center justify-center text-white text-xs font-medium"
+              :style="{ backgroundColor: getCorProfissional(agendamento.nome_profissional) }"
+            >
+              {{ agendamento.nome_profissional?.charAt(0).toUpperCase() || 'P' }}
             </div>
-            <div class="min-w-0 flex-1">
-              <div class="text-sm font-medium text-gray-900 truncate">
+            <div class="min-w-0">
+              <div class="text-xs font-medium text-gray-900 truncate">
                 {{ agendamento.nome_profissional || 'Profissional não informado' }}
               </div>
               <div class="text-xs text-gray-500 truncate">
@@ -97,33 +107,18 @@
             </div>
           </div>
 
-          <!-- ID e Status -->
-          <div class="flex-shrink-0 w-20 text-right">
-            <div class="text-sm font-medium text-gray-900">
-              #{{ agendamento.agendamento_id }}
-            </div>
-            <div class="text-xs text-gray-400">
+          <!-- Criação -->
+          <div class="col-span-1 text-right">
+            <div class="text-xs text-gray-500">
               {{ formatarDataCriacao(agendamento.created_at) }}
             </div>
           </div>
 
-          <!-- Menu de ações -->
-          <div class="flex-shrink-0">
-            <button
-              type="button"
-              class="p-2 text-gray-400 hover:text-gray-600 transition-colors"
-              title="Mais opções"
-            >
-              <EllipsisVerticalIcon class="h-5 w-5" />
+          <!-- Menu -->
+          <div class="col-span-1 text-right">
+            <button class="p-1 text-gray-400 hover:text-gray-600">
+              <EllipsisVerticalIcon class="h-4 w-4" />
             </button>
-          </div>
-        </div>
-
-        <!-- Status de cancelamento (se aplicável) -->
-        <div v-if="agendamento.cancelado" class="mt-2 ml-5">
-          <div class="inline-flex items-center px-2 py-1 text-xs font-medium bg-red-100 text-red-700 rounded-full">
-            <XCircleIcon class="h-3 w-3 mr-1" />
-            Cancelado em {{ formatarDataHora(agendamento.cancelado_as) }}
           </div>
         </div>
       </div>
@@ -156,18 +151,51 @@ const props = withDefaults(defineProps<Props>(), {
 
 // Função para formatar data abreviada
 const formatarDataAbreviada = (data: string | null): string => {
-  if (!data) return 'Data não informada'
+  if (!data) {
+    return 'Data não informada'
+  }
   
   try {
-    const dataObj = new Date(data)
+    let dataObj: Date
+    let dataString = String(data).trim()
+    
+    // Diferentes tentativas de parsing
+    if (dataString.match(/^\d{4}-\d{2}-\d{2}$/)) {
+      // Formato YYYY-MM-DD
+      dataObj = new Date(dataString + 'T12:00:00.000Z')
+    } else if (dataString.match(/^\d{2}\/\d{2}\/\d{4}$/)) {
+      // Formato DD/MM/YYYY  
+      const partes = dataString.split('/')
+      if (partes.length === 3 && partes[0] && partes[1] && partes[2]) {
+        const [dia, mes, ano] = partes
+        dataObj = new Date(parseInt(ano), parseInt(mes) - 1, parseInt(dia))
+      } else {
+        dataObj = new Date(dataString)
+      }
+    } else if (dataString.includes('T')) {
+      // Formato ISO
+      dataObj = new Date(dataString)
+    } else {
+      // Última tentativa
+      dataObj = new Date(dataString)
+    }
+    
+    // Verificar se a data é válida
+    if (isNaN(dataObj.getTime())) {
+      console.error('Data inválida:', dataString)
+      return `Data inválida: ${dataString}`
+    }
+    
     return dataObj.toLocaleDateString('pt-BR', {
       weekday: 'short',
       day: '2-digit',
       month: '2-digit',
       year: 'numeric'
     })
-  } catch {
-    return 'Data inválida'
+    
+  } catch (error) {
+    console.error('Erro ao formatar data:', data, error)
+    return `Erro: ${String(data)}`
   }
 }
 
@@ -184,6 +212,45 @@ const formatarDataCriacao = (dataHora: string | null): string => {
     })
   } catch {
     return '--'
+  }
+}
+
+// Função mais simples e segura para formatar data
+const formatarDataSegura = (data: string | null): string => {
+  if (!data) return 'Data não informada'
+  
+  // Usar uma abordagem mais direta
+  try {
+    // Para YYYY-MM-DD, fazer parsing manual mais seguro
+    const match = data.match(/^(\d{4})-(\d{2})-(\d{2})$/)
+    if (match) {
+      const [, ano, mes, dia] = match
+      const dataObj = new Date(Number(ano), Number(mes) - 1, Number(dia))
+      
+      if (!isNaN(dataObj.getTime())) {
+        return dataObj.toLocaleDateString('pt-BR', {
+          weekday: 'short',
+          day: '2-digit',
+          month: '2-digit',
+          year: 'numeric'
+        })
+      }
+    }
+    
+    // Fallback para outros formatos
+    const dataObj = new Date(data)
+    if (!isNaN(dataObj.getTime())) {
+      return dataObj.toLocaleDateString('pt-BR', {
+        weekday: 'short',
+        day: '2-digit', 
+        month: '2-digit',
+        year: 'numeric'
+      })
+    }
+    
+    return `Data: ${data}`
+  } catch {
+    return `Data: ${data}`
   }
 }
 
@@ -235,6 +302,55 @@ const formatarHorario = (horario: string | null): string => {
     return '--:--'
   } catch {
     return '--:--'
+  }
+}
+
+// Função mais segura para formatar horário
+const formatarHorarioSeguro = (horario: string | null): string => {
+  if (!horario) return '--:--'
+  
+  try {
+    
+    // Extrair HH:MM de diferentes formatos
+    let match
+    
+    // Formato HH:MM:SS-TZ (ex: "11:00:00-03")
+    match = horario.match(/^(\d{1,2}):(\d{2}):(\d{2})/)
+    if (match && match[1] && match[2]) {
+      const [, hora, minuto] = match
+      return `${hora.padStart(2, '0')}:${minuto}`
+    }
+    
+    // Formato HH:MM (ex: "11:00")
+    match = horario.match(/^(\d{1,2}):(\d{2})$/)
+    if (match && match[1] && match[2]) {
+      const [, hora, minuto] = match
+      return `${hora.padStart(2, '0')}:${minuto}`
+    }
+    
+    // Formato ISO com timestamp (ex: "2025-10-16T11:00:00-03:00")
+    if (horario.includes('T')) {
+      const data = new Date(horario)
+      if (!isNaN(data.getTime())) {
+        return data.toLocaleTimeString('pt-BR', {
+          hour: '2-digit',
+          minute: '2-digit'
+        })
+      }
+    }
+    
+    // Tentar extrair qualquer padrão HH:MM
+    match = horario.match(/(\d{1,2}):(\d{2})/)
+    if (match && match[1] && match[2]) {
+      const [, hora, minuto] = match
+      return `${hora.padStart(2, '0')}:${minuto}`
+    }
+    
+    console.error('Formato de horário não reconhecido:', horario)
+    return `${horario}`
+  } catch (error) {
+    console.error('Erro ao formatar horário:', horario, error)
+    return `${horario}`
   }
 }
 
