@@ -1,10 +1,28 @@
-# Nuxt Minimal Starter
+# Paulo Advogado - Sistema de Agendamento Jurídico
 
-Look at the [Nuxt documentation](https://nuxt.com/docs/getting-started/introduction) to learn more.
+Sistema de gerenciamento de agendamentos, casos e consultas para escritórios de advocacia. Desenvolvido com Nuxt 4, TypeScript, Tailwind CSS e Supabase.
 
-## Setup
+## Características
 
-Make sure to install dependencies:
+- 📅 **Agendamento Online** - Clientes podem agendar consultas 24/7
+- 👨‍⚖️ **Gestão de Advogados** - Administre profissionais e suas agendas
+- 📋 **Gestão de Casos** - Organize e acompanhe casos de clientes
+- 📞 **Notificações** - Alertas automáticos para consultas agendadas
+- 🔐 **Autenticação Segura** - Sistema de login e recuperação de senha
+- 📊 **Relatórios** - Análise de agendamentos e casos
+
+## Stack Técnico
+
+- **Framework**: Nuxt 4
+- **Linguagem**: TypeScript
+- **Styling**: Tailwind CSS
+- **Banco de Dados**: Supabase (PostgreSQL)
+- **State Management**: Pinia
+- **Icons**: Heroicons
+
+## Instalação
+
+Certifique-se de instalar as dependências:
 
 ```bash
 # npm
@@ -20,9 +38,9 @@ yarn install
 bun install
 ```
 
-## Development Server
+## Desenvolvimento
 
-Start the development server on `http://localhost:3000`:
+Inicie o servidor de desenvolvimento em `http://localhost:3000`:
 
 ```bash
 # npm
@@ -38,9 +56,9 @@ yarn dev
 bun run dev
 ```
 
-## Production
+## Produção
 
-Build the application for production:
+Construa a aplicação para produção:
 
 ```bash
 # npm

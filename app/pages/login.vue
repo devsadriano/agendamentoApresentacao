@@ -1,7 +1,7 @@
 <template>
   <div class="min-h-screen flex">
     <!-- Coluna da Esquerda - Branding/Informações -->
-    <div class="hidden lg:flex lg:w-1/2 bg-gradient-to-br from-blue-500 via-blue-600 to-blue-700 relative overflow-hidden">
+    <div class="hidden lg:flex lg:w-1/2 bg-gradient-to-br from-slate-700 via-slate-800 to-slate-900 relative overflow-hidden">
       <!-- Background Pattern -->
       <div class="absolute inset-0 opacity-10">
         <div class="absolute inset-0" style="background-image: url('data:image/svg+xml,%3Csvg width=\'60\' height=\'60\' viewBox=\'0 0 60 60\' xmlns=\'http://www.w3.org/2000/svg\'%3E%3Cg fill=\'none\' fill-rule=\'evenodd\'%3E%3Cg fill=\'%23ffffff\' fill-opacity=\'0.1\'%3E%3Ccircle cx=\'30\' cy=\'30\' r=\'2\'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E');"></div>
@@ -13,35 +13,35 @@
           <!-- Logo/Nome da empresa -->
           <div class="mb-8">
             <div class="flex items-center mb-4">
-              <CalendarIcon class="w-12 h-12 text-white" />
-              <h1 class="ml-3 text-3xl font-bold">AgendaPro</h1>
+              <BriefcaseIcon class="w-12 h-12 text-white" />
+              <h1 class="ml-3 text-3xl font-bold">Paulo Advogado</h1>
             </div>
             <div class="w-16 h-1 bg-white/30 rounded"></div>
           </div>
 
           <!-- Título principal -->
           <h2 class="text-4xl font-bold leading-tight mb-6">
-            Gerencie seus agendamentos com facilidade
+            Gerencie seus casos e consultas com facilidade
           </h2>
           
           <!-- Descrição -->
           <p class="text-xl text-white/90 mb-8 leading-relaxed">
-            Simplifique a gestão dos seus compromissos e ofereça uma experiência excepcional aos seus clientes.
+            Simplifique a gestão dos seus atendimentos jurídicos e ofereça uma experiência profissional aos seus clientes.
           </p>
 
           <!-- Features destacadas -->
           <div class="space-y-4">
             <div class="flex items-center">
-              <CheckCircleIcon class="w-6 h-6 text-secondary-300 mr-3 flex-shrink-0" />
+              <CheckCircleIcon class="w-6 h-6 text-amber-300 mr-3 flex-shrink-0" />
               <span class="text-white/90">Agendamento online 24/7</span>
             </div>
             <div class="flex items-center">
-              <CheckCircleIcon class="w-6 h-6 text-secondary-300 mr-3 flex-shrink-0" />
-              <span class="text-white/90">Notificações automáticas</span>
+              <CheckCircleIcon class="w-6 h-6 text-amber-300 mr-3 flex-shrink-0" />
+              <span class="text-white/90">Notificações de consultas</span>
             </div>
             <div class="flex items-center">
-              <CheckCircleIcon class="w-6 h-6 text-secondary-300 mr-3 flex-shrink-0" />
-              <span class="text-white/90">Relatórios detalhados</span>
+              <CheckCircleIcon class="w-6 h-6 text-amber-300 mr-3 flex-shrink-0" />
+              <span class="text-white/90">Gestão de casos e clientes</span>
             </div>
           </div>
         </div>
@@ -54,8 +54,8 @@
         <!-- Logo mobile (visível apenas em telas pequenas) -->
         <div class="lg:hidden text-center mb-8">
           <div class="flex items-center justify-center mb-4">
-            <CalendarIcon class="w-10 h-10 text-blue-500" />
-            <h1 class="ml-2 text-2xl font-bold text-text-primary">AgendaPro</h1>
+            <BriefcaseIcon class="w-10 h-10 text-slate-700" />
+            <h1 class="ml-2 text-2xl font-bold text-slate-900">Paulo Advogado</h1>
           </div>
         </div>
 
@@ -64,8 +64,8 @@
 
         <!-- Footer -->
         <div class="mt-8 text-center">
-          <p class="text-xs text-text-tertiary">
-            © 2025 AgendaPro. Todos os direitos reservados.
+          <p class="text-xs text-slate-400">
+            © 2025 Paulo Advogado. Todos os direitos reservados.
           </p>
         </div>
       </div>
@@ -74,7 +74,7 @@
 </template>
 
 <script setup lang="ts">
-import { CalendarIcon, CheckCircleIcon } from '@heroicons/vue/24/outline'
+import { BriefcaseIcon, CheckCircleIcon } from '@heroicons/vue/24/outline'
 
 // Configurações da página
 definePageMeta({
@@ -83,13 +83,11 @@ definePageMeta({
 })
 
 useHead({
-  title: 'Login - AgendaPro',
+  title: 'Login - Paulo Advogado',
   meta: [
-    { name: 'description', content: 'Faça login na sua conta AgendaPro para gerenciar seus agendamentos' }
+    { name: 'description', content: 'Faça login na sua conta Paulo Advogado para gerenciar seus casos e consultas' }
   ]
-})
-
-// Função para lidar com o login (será implementada depois)
+})// Função para lidar com o login (será implementada depois)
 const handleLogin = (credentials: { email: string; password: string }) => {
   console.log('Login attempt:', credentials)
   // Aqui futuramente será implementada a lógica de autenticação

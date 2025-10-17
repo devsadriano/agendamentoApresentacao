@@ -171,16 +171,28 @@ const buscarClientesBackground = async () => {
 
 /**
  * Watch para reagir a mudanças no profissional ativo
+ * Não usar immediate para evitar carregamento duplo
  */
-watch(profissionalAtivo, buscarAgendamentosSemana, { immediate: true })
+watch(profissionalAtivo, (novoProfissional, antigoProfilessional) => {
+  // Só carregar se realmente mudou o profissional
+  if (novoProfissional?.profissional_id !== antigoProfilessional?.profissional_id) {
+    buscarAgendamentosSemana()
+  }
+})
 
 /**
  * Watch para reagir a mudanças na semana
  */
 watch(periodoSemanaAtual, buscarAgendamentosSemana)
 
-// Buscar clientes quando o componente for montado
-onMounted(() => {
+// Buscar dados quando o componente for montado
+onMounted(async () => {
+  // Carregar agendamentos se já houver profissional ativo
+  if (profissionalAtivo.value) {
+    await buscarAgendamentosSemana()
+  }
+  
+  // Buscar clientes em paralelo
   buscarClientesBackground()
 })
 

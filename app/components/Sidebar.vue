@@ -4,16 +4,14 @@
     isCollapsed ? 'w-16' : 'w-64'
   ]">
     <!-- Header -->
-    <div class="bg-blue-600 text-white p-4 flex items-center justify-between">
+    <div class="bg-slate-800 text-white p-4 flex items-center justify-between">
       <div v-if="!isCollapsed" class="flex-1">
-        <h2 class="text-xl font-bold">Agendamento</h2>
-        <p class="text-blue-100 text-sm">Sistema de Gestão</p>
-      </div>
-      
-      <!-- Botão de colapso -->
+        <h2 class="text-xl font-bold">Paulo Advogado</h2>
+        <p class="text-slate-300 text-sm">Sistema Jurídico</p>
+      </div>      <!-- Botão de colapso -->
       <button 
         @click="toggleSidebar"
-        class="p-1 rounded hover:bg-blue-700 transition-colors"
+        class="p-1 rounded hover:bg-slate-700 transition-colors"
         :class="{ 'mx-auto': isCollapsed }"
       >
         <ChevronLeftIcon v-if="!isCollapsed" class="w-5 h-5" />
@@ -22,14 +20,19 @@
     </div>
 
     <!-- Navigation Menu -->
-    <nav class="flex-1 p-4 space-y-2">
-      <!-- 1. Dashboard - redireciona para página index -->
+    <nav class="flex-1 p-4 space-y-1 overflow-y-auto">
+      <!-- SEÇÃO: PRINCIPAL -->
+      <div v-if="!isCollapsed" class="px-3 pt-2 pb-2">
+        <p class="text-xs font-semibold text-slate-500 uppercase tracking-wider">Principal</p>
+      </div>
+
+      <!-- Dashboard -->
       <NuxtLink 
         to="/" 
         :class="[
           'flex items-center p-3 rounded-lg hover:bg-gray-100 transition-colors group',
           isCollapsed ? 'justify-center' : 'space-x-3',
-          { 'bg-blue-50 text-blue-600 border-r-2 border-blue-600': $route.path === '/' }
+          { 'bg-slate-50 text-slate-700 border-r-2 border-slate-700': $route.path === '/' }
         ]"
         :title="isCollapsed ? 'Dashboard' : ''"
       >
@@ -37,41 +40,13 @@
         <span v-if="!isCollapsed" class="font-medium">Dashboard</span>
       </NuxtLink>
 
-      <!-- 2. Especialidades - redireciona para página especialidades -->
-      <NuxtLink 
-        to="/especialidades" 
-        :class="[
-          'flex items-center p-3 rounded-lg hover:bg-gray-100 transition-colors group',
-          isCollapsed ? 'justify-center' : 'space-x-3',
-          { 'bg-blue-50 text-blue-600 border-r-2 border-blue-600': $route.path === '/especialidades' }
-        ]"
-        :title="isCollapsed ? 'Especialidades' : ''"
-      >
-        <LightBulbIcon class="w-5 h-5 flex-shrink-0" />
-        <span v-if="!isCollapsed" class="font-medium">Especialidades</span>
-      </NuxtLink>
-
-      <!-- 3. Agendamentos -->
-      <NuxtLink 
-        to="/agendamentos" 
-        :class="[
-          'flex items-center p-3 rounded-lg hover:bg-gray-100 transition-colors group',
-          isCollapsed ? 'justify-center' : 'space-x-3',
-          { 'bg-blue-50 text-blue-600 border-r-2 border-blue-600': $route.path === '/agendamentos' }
-        ]"
-        :title="isCollapsed ? 'Agendamentos' : ''"
-      >
-        <CalendarIcon class="w-5 h-5 flex-shrink-0" />
-        <span v-if="!isCollapsed" class="font-medium">Agendamentos</span>
-      </NuxtLink>
-
-      <!-- 4. Clientes -->
+      <!-- Clientes -->
       <NuxtLink 
         to="/clientes" 
         :class="[
           'flex items-center p-3 rounded-lg hover:bg-gray-100 transition-colors group',
           isCollapsed ? 'justify-center' : 'space-x-3',
-          { 'bg-blue-50 text-blue-600 border-r-2 border-blue-600': $route.path === '/clientes' }
+          { 'bg-slate-50 text-slate-700 border-r-2 border-slate-700': $route.path === '/clientes' }
         ]"
         :title="isCollapsed ? 'Clientes' : ''"
       >
@@ -79,18 +54,97 @@
         <span v-if="!isCollapsed" class="font-medium">Clientes</span>
       </NuxtLink>
 
-      <!-- 5. Profissionais -->
+      <!-- Processos -->
+      <NuxtLink 
+        to="/processos" 
+        :class="[
+          'flex items-center p-3 rounded-lg hover:bg-gray-100 transition-colors group',
+          isCollapsed ? 'justify-center' : 'space-x-3',
+          { 'bg-slate-50 text-slate-700 border-r-2 border-slate-700': $route.path === '/processos' }
+        ]"
+        :title="isCollapsed ? 'Processos' : ''"
+      >
+        <FolderIcon class="w-5 h-5 flex-shrink-0" />
+        <span v-if="!isCollapsed" class="font-medium">Processos</span>
+      </NuxtLink>
+
+      <!-- Tarefas -->
+      <NuxtLink 
+        to="/tarefas" 
+        :class="[
+          'flex items-center p-3 rounded-lg hover:bg-gray-100 transition-colors group',
+          isCollapsed ? 'justify-center' : 'space-x-3',
+          { 'bg-slate-50 text-slate-700 border-r-2 border-slate-700': $route.path === '/tarefas' }
+        ]"
+        :title="isCollapsed ? 'Tarefas' : ''"
+      >
+        <ClipboardDocumentListIcon class="w-5 h-5 flex-shrink-0" />
+        <span v-if="!isCollapsed" class="font-medium">Tarefas</span>
+      </NuxtLink>
+
+      <!-- Calendário -->
+      <NuxtLink 
+        to="/calendario" 
+        :class="[
+          'flex items-center p-3 rounded-lg hover:bg-gray-100 transition-colors group',
+          isCollapsed ? 'justify-center' : 'space-x-3',
+          { 'bg-slate-50 text-slate-700 border-r-2 border-slate-700': $route.path === '/calendario' }
+        ]"
+        :title="isCollapsed ? 'Calendário' : ''"
+      >
+        <CalendarIcon class="w-5 h-5 flex-shrink-0" />
+        <span v-if="!isCollapsed" class="font-medium">Calendário</span>
+      </NuxtLink>
+
+      <!-- Divisor -->
+      <div v-if="!isCollapsed" class="my-4 border-t border-slate-200"></div>
+      <div v-else class="my-2"></div>
+
+      <!-- SEÇÃO: GESTÃO -->
+      <div v-if="!isCollapsed" class="px-3 pt-2 pb-2">
+        <p class="text-xs font-semibold text-slate-500 uppercase tracking-wider">Gestão</p>
+      </div>
+
+      <!-- Advogados -->
       <NuxtLink 
         to="/profissionais" 
         :class="[
           'flex items-center p-3 rounded-lg hover:bg-gray-100 transition-colors group',
           isCollapsed ? 'justify-center' : 'space-x-3',
-          { 'bg-blue-50 text-blue-600 border-r-2 border-blue-600': $route.path === '/profissionais' }
+          { 'bg-slate-50 text-slate-700 border-r-2 border-slate-700': $route.path === '/profissionais' }
         ]"
-        :title="isCollapsed ? 'Profissionais' : ''"
+        :title="isCollapsed ? 'Advogados' : ''"
       >
         <UsersIcon class="w-5 h-5 flex-shrink-0" />
-        <span v-if="!isCollapsed" class="font-medium">Profissionais</span>
+        <span v-if="!isCollapsed" class="font-medium">Advogados</span>
+      </NuxtLink>
+
+      <!-- Contatos (Especialidades) -->
+      <NuxtLink 
+        to="/especialidades" 
+        :class="[
+          'flex items-center p-3 rounded-lg hover:bg-gray-100 transition-colors group',
+          isCollapsed ? 'justify-center' : 'space-x-3',
+          { 'bg-slate-50 text-slate-700 border-r-2 border-slate-700': $route.path === '/especialidades' }
+        ]"
+        :title="isCollapsed ? 'Áreas de Atuação' : ''"
+      >
+        <LightBulbIcon class="w-5 h-5 flex-shrink-0" />
+        <span v-if="!isCollapsed" class="font-medium">Áreas de Atuação</span>
+      </NuxtLink>
+
+      <!-- Financeiro -->
+      <NuxtLink 
+        to="/financeiro" 
+        :class="[
+          'flex items-center p-3 rounded-lg hover:bg-gray-100 transition-colors group',
+          isCollapsed ? 'justify-center' : 'space-x-3',
+          { 'bg-slate-50 text-slate-700 border-r-2 border-slate-700': $route.path === '/financeiro' }
+        ]"
+        :title="isCollapsed ? 'Financeiro' : ''"
+      >
+        <CurrencyDollarIcon class="w-5 h-5 flex-shrink-0" />
+        <span v-if="!isCollapsed" class="font-medium">Financeiro</span>
       </NuxtLink>
     </nav>
 
@@ -131,8 +185,12 @@ import {
   HomeIcon,
   LightBulbIcon,
   CalendarIcon,
+  CalendarDaysIcon,
   UserIcon,
   UsersIcon,
+  FolderIcon,
+  ClipboardDocumentListIcon,
+  CurrencyDollarIcon,
   CogIcon,
   ChevronLeftIcon,
   ChevronRightIcon

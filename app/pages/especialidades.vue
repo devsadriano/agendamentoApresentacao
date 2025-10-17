@@ -2,7 +2,7 @@
   <NuxtLayout>
     <!-- Header com título -->
     <div class="px-6 py-4">
-      <h1 class="text-2xl font-bold text-gray-800">Especialidades</h1>
+      <h1 class="text-2xl font-bold text-slate-800">Áreas de Atuação</h1>
     </div>
     
     <!-- Área de conteúdo -->
@@ -10,7 +10,7 @@
       <!-- Header com botão adicionar -->
       <div class="mb-6 flex justify-between items-center">
         <div>
-          <p class="text-gray-600">Gerencie as especialidades do sistema</p>
+          <p class="text-slate-600">Gerencie as áreas de atuação do escritório</p>
         </div>
         <BaseButton
           variant="primary"
@@ -21,7 +21,7 @@
           <template #icon-left>
             <PlusIcon class="h-4 w-4" />
           </template>
-          Adicionar Especialidade
+          Adicionar Área
         </BaseButton>
       </div>
 

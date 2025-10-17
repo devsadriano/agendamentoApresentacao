@@ -2,7 +2,7 @@
   <NuxtLayout>
     <!-- Header com título -->
     <div class="px-6 py-4">
-      <h1 class="text-2xl font-bold text-gray-800">Profissionais</h1>
+      <h1 class="text-2xl font-bold text-slate-800">Advogados</h1>
     </div>
     
     <!-- Área de conteúdo -->
@@ -10,7 +10,7 @@
       <!-- Header com botão adicionar -->
       <div class="mb-6 flex justify-between items-center">
         <div>
-          <p class="text-gray-600">Gerencie os profissionais do sistema</p>
+          <p class="text-slate-600">Gerencie os advogados do escritório</p>
         </div>
         <BaseButton
           variant="primary"
@@ -21,7 +21,7 @@
           <template #icon-left>
             <PlusIcon class="h-4 w-4" />
           </template>
-          Adicionar Profissional
+          Adicionar Advogado
         </BaseButton>
       </div>
 

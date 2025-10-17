@@ -3,9 +3,10 @@ import { useProfissionais } from './useProfissionais'
 
 // Estado global do profissional ativo
 const profissionalAtivo = ref<Profissional | null>(null)
-const loading = ref(true)
+const loading = ref(false) // Começa como false para evitar flash de loading
 const error = ref<string | null>(null)
 const forceReload = ref(0) // Trigger para forçar recarga
+const jaCarregou = ref(false) // Flag para saber se já carregou uma vez
 
 export const useProfissionalAtivo = () => {
   const userStore = useUserStore()
@@ -16,6 +17,9 @@ export const useProfissionalAtivo = () => {
    * Prioriza o profissional associado ao usuário logado
    */
   const carregarProfissionalAtivo = async () => {
+    // Se já está carregando, não faz nada
+    if (loading.value) return
+    
     loading.value = true
     error.value = null
 
@@ -24,6 +28,7 @@ export const useProfissionalAtivo = () => {
       
       if (profissionais.length === 0) {
         profissionalAtivo.value = null
+        jaCarregou.value = true
         return
       }
 
@@ -35,12 +40,14 @@ export const useProfissionalAtivo = () => {
         
         if (profissionalLogado) {
           profissionalAtivo.value = profissionalLogado
+          jaCarregou.value = true
           return
         }
       }
 
       // Se não encontrou ou não está logado, usa o primeiro da lista
       profissionalAtivo.value = profissionais[0] || null
+      jaCarregou.value = true
     } catch (err) {
       error.value = err instanceof Error ? err.message : 'Erro ao carregar profissional ativo'
       console.error('Erro ao carregar profissional ativo:', err)
@@ -79,16 +86,23 @@ export const useProfissionalAtivo = () => {
     forceReload.value++
   }
 
-  // Carregar profissional automaticamente em várias situações
-  watchEffect(async () => {
-    // Observar: usuário logado, force reload trigger
-    const shouldLoad = userStore.userProfile?.id || forceReload.value > 0
-    
-    if (shouldLoad) {
+  // Carregar profissional automaticamente apenas uma vez quando o componente monta
+  onMounted(async () => {
+    if (!jaCarregou.value && userStore.userProfile?.id) {
       await carregarProfissionalAtivo()
-    } else if (!userStore.userProfile?.id) {
-      // Se não há usuário logado, limpar o profissional ativo
-      profissionalAtivo.value = null
+    }
+  })
+
+  // Observar apenas mudanças críticas do usuário
+  watch(() => userStore.userProfile?.id, async (newId, oldId) => {
+    // Só recarregar se o ID do usuário mudou (login/logout)
+    if (newId !== oldId) {
+      if (newId) {
+        await carregarProfissionalAtivo()
+      } else {
+        profissionalAtivo.value = null
+        jaCarregou.value = false
+      }
     }
   })
 

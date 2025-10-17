@@ -4,6 +4,7 @@
     :type="type"
     :disabled="disabled || loading"
     :class="buttonClasses"
+    :style="buttonStyle"
     @click="handleClick"
   >
     <!-- Loading spinner -->
@@ -110,23 +111,22 @@ const buttonClasses = computed(() => {
   // Variantes
   const variantClasses = {
     primary: [
-      'bg-blue-500',
-      'text-white',
+      'text-slate-900',
       'border-transparent',
-      'hover:bg-blue-600',
-      'focus:ring-blue-500',
-      'active:bg-blue-700',
-      'shadow-soft',
-      'hover:shadow-medium',
+      'focus:ring-amber-400',
+      'shadow-md',
+      'hover:shadow-lg',
+      'font-semibold',
     ],
     secondary: [
-      'bg-neutral-100',
-      'text-neutral-700',
-      'border-neutral-200',
-      'hover:bg-neutral-200',
-      'focus:ring-neutral-500',
-      'active:bg-neutral-300',
-      'shadow-soft',
+      'bg-slate-700',
+      'text-white',
+      'border-transparent',
+      'hover:bg-slate-800',
+      'focus:ring-slate-500',
+      'active:bg-slate-900',
+      'shadow-md',
+      'hover:shadow-lg',
     ],
     success: [
       'bg-success',
@@ -165,12 +165,12 @@ const buttonClasses = computed(() => {
     ],
     outline: [
       'bg-transparent',
-      'text-blue-600',
+      'text-slate-700',
       'border',
-      'border-blue-300',
-      'hover:bg-blue-50',
-      'focus:ring-blue-500',
-      'active:bg-blue-100',
+      'border-slate-300',
+      'hover:bg-slate-50',
+      'focus:ring-slate-500',
+      'active:bg-slate-100',
     ],
   }
 
@@ -179,5 +179,17 @@ const buttonClasses = computed(() => {
     ...sizeClasses[props.size],
     ...variantClasses[props.variant],
   ]
+})
+
+const buttonStyle = computed(() => {
+  if (props.variant === 'primary') {
+    return {
+      backgroundColor: '#f8af18',
+      ':hover': {
+        backgroundColor: '#e69f10'
+      }
+    }
+  }
+  return {}
 })
 </script>

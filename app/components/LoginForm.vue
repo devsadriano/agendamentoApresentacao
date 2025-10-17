@@ -2,11 +2,11 @@
   <div class="w-full max-w-md">
     <!-- Header do formulário -->
     <div class="text-center mb-8">
-      <h2 class="text-3xl font-bold text-text-primary mb-2">
-        Bem-vindo de volta
+      <h2 class="text-3xl font-bold text-slate-800 mb-2">
+        Portal Jurídico
       </h2>
-      <p class="text-text-secondary">
-        Faça login para acessar sua conta
+      <p class="text-slate-600">
+        Acesse sua conta para gerenciar seus casos
       </p>
     </div>
 
@@ -47,15 +47,15 @@
             id="login-remember-me"
             name="login-remember-me"
             type="checkbox"
-            class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-border-default rounded"
+          class="h-4 w-4 text-slate-700 focus:ring-slate-500 border-slate-300 rounded"
           />
-          <label for="login-remember-me" class="ml-2 block text-sm text-text-secondary">
+          <label for="login-remember-me" class="ml-2 block text-sm text-slate-600">
             Lembrar de mim
           </label>
         </div>
         
         <div class="text-sm">
-          <a href="#" class="font-medium text-blue-600 hover:text-blue-500 transition-colors">
+          <a href="/esqueci-senha" class="font-medium text-slate-700 hover:text-slate-900 transition-colors">
             Esqueci minha senha
           </a>
         </div>
@@ -78,18 +78,18 @@
       <!-- Divisor -->
       <div class="relative">
         <div class="absolute inset-0 flex items-center">
-          <div class="w-full border-t border-border-light"></div>
+          <div class="w-full border-t border-slate-300"></div>
         </div>
         <div class="relative flex justify-center text-sm">
-          <span class="px-2 bg-white text-text-tertiary">ou</span>
+          <span class="px-2 bg-white text-slate-500">ou</span>
         </div>
       </div>
 
       <!-- Botão de registro -->
       <div class="text-center">
-        <p class="text-sm text-text-secondary">
+        <p class="text-sm text-slate-600">
           Não tem uma conta?
-          <a href="#" class="font-medium text-blue-600 hover:text-blue-500 transition-colors">
+          <a href="#" class="font-medium text-slate-700 hover:text-slate-900 transition-colors">
             Criar conta
           </a>
         </p>
